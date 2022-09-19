@@ -1,0 +1,33 @@
+
+
+generalGuildMenu:
+  0:
+    name: "&eLonca Bilgileri"
+    type: PLAYER_HEAD
+    head-value: ""
+    lore:
+      - ""
+      - "&eİsim: %name%"
+      - "&eÜye Sayısı: %count%"
+      - "&eSeviye: %level%"
+      - "&eBanka: %money%"
+      - "&eAktif Geliştirme: %buff%"
+      - ""
+  1:
+    name: "&eÜyeler"
+    type: PLAYER_HEAD
+    head-value: ""
+    lore:
+      - ""
+  2:
+    name: "&eGeliştirmeler"
+    type: PLAYER_HEAD
+    head-value: ""
+    lore:
+      - ""
+  4:
+    name: "&eAyarlar"
+    type: PLAYER_HEAD
+    head-value: ""
+    lore:
+      - ""

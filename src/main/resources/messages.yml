@@ -1,0 +1,25 @@
+
+
+invite-sent: ""
+invite-already-has-guild: ""
+name-not-found: ""
+invite-received: ""
+guild-created: ""
+guild-name-unavailable: ""
+guild-removed: ""
+upgrade-done: ""
+member-kicked: ""
+member-up: ""
+donated: ""
+donated-enough-money: ""
+no-perm: ""
+
+help:
+  - "&e/lonca - Genel lonca menüsünü açar"
+  - "&e/lonca oluştur <lonca ismi> - Lonca oluşturur"
+  - "&e/lonca davet <isim> - Oyuncuyu loncaya davet eder"
+  - "&e/lonca at <isim> - Oyuncuyu loncadan atar"
+  - "&e/lonca upgrade - Upgrade menüsünü açar"
+  - "&e/lonca ayarlar - Ayarlar menüsünü açar"
+  - "&e/lonca bağış <miktar> - Loncaya bağış yaparsın"
+  - "&e/lonca sil - Loncayı siler"

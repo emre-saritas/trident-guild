@@ -1,0 +1,60 @@
+package tc.trident.tridentguild.menus;
+
+import fr.minuskube.inv.ClickableItem;
+import fr.minuskube.inv.SmartInventory;
+import fr.minuskube.inv.content.InventoryContents;
+import fr.minuskube.inv.content.InventoryProvider;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import tc.trident.tridentguild.Guild;
+import tc.trident.tridentguild.GuildManager;
+import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.utils.Utils;
+import tc.trident.tridentguild.utils.YamlItem;
+
+public class GeneralGuildMenu implements InventoryProvider {
+
+    private final Guild guild;
+
+    public GeneralGuildMenu(String playerName){
+        this.guild = TridentGuild.getGuildManager().getPlayerGuild(playerName);
+    }
+
+    public void init(Player player, InventoryContents contents){
+        YamlItem item = new YamlItem("generalGuildMenu.0", TridentGuild.menus);
+        item.replaceLore("%name%",guild.getGuildName());
+        item.replaceLore("%count%",guild.guildMembers.size()+"");
+        item.replaceLore("%level%",guild.getGuildLevel()+"");
+        item.replaceLore("%money%", Utils.nf.format(guild.getBalance()));
+        item.replaceLore("%buff%", guild.getActiveBuffID());
+        contents.set(1,1, ClickableItem.empty(item.complete()));
+        item = new YamlItem("generalGuildMenu.1", TridentGuild.menus);
+        contents.set(1,3, ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            MembersMenu.openMenu(player);
+        }));
+        item = new YamlItem("generalGuildMenu.2", TridentGuild.menus);
+        contents.set(1,5, ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            UpgradesMenu.openMenu(player);
+        }));
+        item = new YamlItem("generalGuildMenu.3", TridentGuild.menus);
+        contents.set(1,7, ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            SettingsMenu.openMenu(player);
+        }));
+    }
+
+
+
+    public static void openMenu(Player player){
+        SmartInventory INVENTORY = SmartInventory.builder() //  Builds the menu
+                .id("guild-menu")
+                .provider(new GeneralGuildMenu(player.getName()))
+                .size(3, 9)
+                .title(ChatColor.BLACK + "Lonca")
+                .build();
+        INVENTORY.open(player); //    Opens the menu
+    }
+
+    public void update(Player player, InventoryContents inventoryContents) {
+
+    }
+}
