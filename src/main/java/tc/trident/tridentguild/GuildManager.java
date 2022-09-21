@@ -11,8 +11,8 @@ import java.util.UUID;
 public class GuildManager {
 
 
-    private HashMap<UUID, Guild> loadedGuilds = new HashMap<>();
-    private HashMap<String, UUID> onlinePlayerGuilds = new HashMap<>();
+    public HashMap<UUID, Guild> loadedGuilds = new HashMap<>();
+    public HashMap<String, UUID> onlinePlayerGuilds = new HashMap<>();
     public List<String> guildNames = new ArrayList<>();
 
     public GuildManager(){

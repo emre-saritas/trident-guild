@@ -4,6 +4,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
@@ -116,6 +117,11 @@ public class Utils {
             }
         }
         return itemCountInPlayersInventory;
+    }
+
+    public static void sendError(Player player, String errorID){
+        player.sendMessage(Utils.addColors(Utils.getMessage(errorID,true)));
+        player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO,1,1);
     }
 
     public static String getMessage(String id,boolean prefix){

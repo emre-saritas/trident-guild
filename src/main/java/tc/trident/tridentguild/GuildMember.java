@@ -38,8 +38,17 @@ public class GuildMember {
         return player;
     }
     public enum GuildPermission{
-        OWNER,
-        OPERATOR,
-        MEMBER
+        OWNER(2),
+        OPERATOR(1),
+        MEMBER(0);
+
+        private final int power;
+        private GuildPermission(int power){
+            this.power=power;
+        }
+
+        public int getPower() {
+            return power;
+        }
     }
 }
