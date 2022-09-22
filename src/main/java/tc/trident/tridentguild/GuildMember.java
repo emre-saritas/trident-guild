@@ -28,27 +28,47 @@ public class GuildMember {
     public GuildPermission getPermission() {
         return permission;
     }
+
+    public void setPermission(GuildPermission permission) {
+        this.permission = permission;
+    }
+
     public void makeOperator(){
         this.permission=GuildPermission.OPERATOR;
     }
     public void makeMember(){
         this.permission=GuildPermission.MEMBER;
     }
+
+    public int getTotalDonate() {
+        return totalDonate;
+    }
+
+    public void setTotalDonate(int totalDonate) {
+        this.totalDonate = totalDonate;
+    }
+
     public OfflinePlayer getPlayer() {
         return player;
     }
     public enum GuildPermission{
-        OWNER(2),
-        OPERATOR(1),
-        MEMBER(0);
+        OWNER(2,"Kurucu"),
+        OPERATOR(1,"Operatör"),
+        MEMBER(0, "Üye");
 
         private final int power;
-        private GuildPermission(int power){
+        private final String name;
+        private GuildPermission(int power, String name){
             this.power=power;
+            this.name=name;
         }
 
         public int getPower() {
             return power;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }

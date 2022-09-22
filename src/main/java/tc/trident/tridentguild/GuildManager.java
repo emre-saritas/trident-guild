@@ -24,6 +24,10 @@ public class GuildManager {
     public void loadOnlinePlayerGuildUUIDs(){
 
     }
+
+    public void syncGuild(Guild guild){
+
+    }
     public void loadOnlineGuilds(){
         Bukkit.getServer().getOnlinePlayers().forEach(player -> {
             if(!isGuildLoaded(player.getName())){
@@ -45,6 +49,16 @@ public class GuildManager {
         loadedGuilds.put(uuid,guild);
         onlinePlayerGuilds.put(playerName,uuid);
         guildNames.add(guildName);
+        TridentGuild.getGuildManager().syncGuild(guild);
+    }
+    public void removeGuild(Guild guild){
+        guildNames.remove(guild.getGuildName());
+        UUID uuid = guild.getGuildUUID();
+        guild.guildMembers.forEach((name,gMember)->{
+            onlinePlayerGuilds.remove(name);
+        });
+        loadedGuilds.remove(uuid);
+        TridentGuild.getGuildManager().syncGuild(guild);
     }
     public void loadGuild(UUID guildUUID){
         loadedGuilds.put(guildUUID,null);

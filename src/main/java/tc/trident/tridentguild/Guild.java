@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import java.util.UUID;
 public class Guild {
     private BannerMeta bannerMeta;
     public HashMap<String, GuildMember> guildMembers = new HashMap<>();
+    public List<GuildMember> memberList = new ArrayList<>();
     public HashMap<String, Boolean> memberPerms = new HashMap<>();
     public HashMap<String, Boolean> operatorPerms = new HashMap<>();
     private final String guildName;
@@ -27,15 +29,11 @@ public class Guild {
         this.guildLevel = 0;
         this.balance = 0;
         this.memberPerms.put("guild.invite",false);
-        this.memberPerms.put("guild.kick",false);
-        this.memberPerms.put("guild.bannerchange",false);
-        this.memberPerms.put("guild.levelup",false);
-        this.memberPerms.put("guild.buff",false);
         this.operatorPerms.put("guild.invite",true);
         this.operatorPerms.put("guild.kick",false);
         this.operatorPerms.put("guild.bannerchange",false);
         this.operatorPerms.put("guild.levelup",false);
-        this.operatorPerms.put("guild.buff",false);
+        this.operatorPerms.put("guild.upgrade",false);
     }
 
     public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, double balance, String activeBuffID, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
@@ -47,9 +45,13 @@ public class Guild {
         this.activeBuffID=activeBuffID;
         setGuildMembers(guildMembers);
         setGuildPermissions(memberPerms,operatorPerms);
+        memberList.addAll(this.guildMembers.values());
     }
 
 
+    public boolean isGuildMember(String playerName){
+        return guildMembers.containsKey(playerName);
+    }
     public int getMemberLimit(){
         return TridentGuild.config.getInt("guild.levels."+guildLevel+".member-limit");
     }
@@ -119,8 +121,11 @@ public class Guild {
     public void addGuildMember(String playerName){
         GuildMember guildMember = new GuildMember(playerName);
         guildMembers.put(playerName,guildMember);
+        memberList.add(guildMember);
+        TridentGuild.getGuildManager().syncGuild(this);
     }
     public void removeGuildMember(String playerName){
         guildMembers.remove(playerName);
+        TridentGuild.getGuildManager().syncGuild(this);
     }
 }

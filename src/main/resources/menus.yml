@@ -1,6 +1,6 @@
 
 
-generalGuildMenu:
+general-guild:
   0:
     name: "&eLonca Bilgileri"
     type: PLAYER_HEAD
@@ -31,3 +31,29 @@ generalGuildMenu:
     head-value: ""
     lore:
       - ""
+members:
+  member:
+    name: "&e%name%"
+    lore:
+      - ""
+      - "&eYetki: %perm%"
+      - "&eBağış: %donated%"
+      - ""
+      - "&6Ayarlar için tıklayın"
+member-settings:
+  0:
+    name: "&eOyuncu Bilgileri"
+    lore:
+      - ""
+      - "&eYetki: %perm%"
+      - "&eBağış: %donated%"
+      - ""
+  1:
+    name: "&eYetki Ayarla"
+    lore:
+      - ""
+      - "&eYetki Yükselt: &fSol-Tık"
+      - "&eYetki Düşür: &fSağ-Tık"
+      - ""
+  2:
+    name: "&cOyuncuyu At"

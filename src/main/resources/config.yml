@@ -8,7 +8,7 @@ guild:
       member-limit: 10
       money-needed: 1000
 
-  buffs:
+  upgrades:
     miner-money:
       levels:
         0:
