@@ -26,7 +26,6 @@ public class GeneralGuildMenu implements InventoryProvider {
         item.replaceLore("%count%",guild.guildMembers.size()+"");
         item.replaceLore("%level%",guild.getGuildLevel()+"");
         item.replaceLore("%money%", Utils.nf.format(guild.getBalance()));
-        item.replaceLore("%buff%", guild.getActiveBuffID());
         contents.set(1,1, ClickableItem.empty(item.complete()));
         item = new YamlItem("generalGuildMenu.1", TridentGuild.menus);
         contents.set(1,3, ClickableItem.of(item.complete(),inventoryClickEvent -> {

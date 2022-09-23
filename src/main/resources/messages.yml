@@ -23,6 +23,8 @@ donated: ""
 number-error: ""
 no-perm: ""
 cant-do: ""
+banner-set: ""
+banner-error: ""
 
 help:
   - "&e/lonca - Genel lonca menüsünü açar"

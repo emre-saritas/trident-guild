@@ -12,7 +12,6 @@ general-guild:
       - "&eÜye Sayısı: %count%"
       - "&eÜye Sınırı: %limit%"
       - "&eBanka: %money%"
-      - "&eAktif Geliştirme: %buff%"
       - ""
   1:
     name: "&eÜyeler"
@@ -32,9 +31,15 @@ general-guild:
     head-value: ""
     lore:
       - ""
+  5:
+    name: "&eFlama"
+    type: WHITE_BANNER
+    lore:
+      - ""
 members:
   member:
     name: "&e%name%"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&eYetki: %perm%"
@@ -44,6 +49,7 @@ members:
 member-settings:
   0:
     name: "&eOyuncu Bilgileri"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&eYetki: %perm%"
@@ -51,6 +57,7 @@ member-settings:
       - ""
   1:
     name: "&eYetki Ayarla"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&eYetki Yükselt: &fSol-Tık"
@@ -62,24 +69,28 @@ member-settings:
 settings:
   0:
     name: "&eFlama Değiştir"
+    type: WHITE_BANNER
     lore:
       - ""
       - "&eFlama Değişimi"
       - ""
   1:
     name: "&eOperatör Yetkileri"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&eOperatör Yetkilerini Düzenle"
       - ""
   2:
     name: "&eÜye Yetkileri"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&eÜye Yetkilerini Düzenle"
       - ""
   4:
     name: "&cLoncayı Sil"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&eOperatör Yetkilerini Düzenle"
