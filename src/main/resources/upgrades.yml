@@ -1,0 +1,66 @@
+
+guild:
+  name: "&eLonca Seviye Atlatma"
+  type: PLAYER_HEAD
+  lore:
+    - ""
+    - "&aŞuanki Seviye: &f%current-level%"
+    - "&aŞuanki Oyuncu Limiti: &f%current-limit%"
+    - ""
+    - "&eGeliştirme Ücreti: &f%price%"
+    - "&eSonraki Oyuncu Limiti: &f%next-limit%"
+    - ""
+  levels:
+    0:
+      limit: 10
+    1:
+      price: 1000000
+      guild-level: 20
+miner:
+  name: "&eMadencilik Geliştirme (%level%. Seviye)"
+  type: IRON_PICKAXE
+  lore:
+    - ""
+    - "&eÖzellik: &f---"
+    - ""
+  levels:
+    0:
+    1:
+      price: 1000
+      guild-level: 1
+lumber:
+  name: "&eOdunculuk Geliştirme (%level%. Seviye)"
+  type: IRON_AXE
+  lore:
+    - ""
+    - "&eÖzellik: &f---"
+    - ""
+  levels:
+    0:
+    1:
+      price: 1000
+      guild-level: 1
+hunter:
+  name: "&eMaceracılık Geliştirme (%level%. Seviye)"
+  type: IRON_SWORD
+  lore:
+    - ""
+    - "&eÖzellik: &f---"
+    - ""
+  levels:
+    0:
+    1:
+      price: 1000
+      guild-level: 1
+farmer:
+  name: "&eÇiftçilik Geliştirme (%level%. Seviye)"
+  type: IRON_HOE
+  lore:
+    - ""
+    - "&eÖzellik: &f---"
+    - ""
+  levels:
+    0:
+    1:
+      price: 1000
+      guild-level: 1

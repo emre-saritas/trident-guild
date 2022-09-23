@@ -1,21 +1,2 @@
 debug-mode: true
 
-guild:
-  levels:
-    0:
-      member-limit: 5
-    1:
-      member-limit: 10
-      money-needed: 1000
-
-  upgrades:
-    miner-money:
-      levels:
-        0:
-          price: 1000
-          chance: 10
-          amount: 10
-        1:
-          price: 2000
-          chance: 10
-          amount: 15

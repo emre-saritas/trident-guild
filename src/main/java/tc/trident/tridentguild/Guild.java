@@ -15,9 +15,12 @@ public class Guild {
     public List<GuildMember> memberList = new ArrayList<>();
     public HashMap<String, Boolean> memberPerms = new HashMap<>();
     public HashMap<String, Boolean> operatorPerms = new HashMap<>();
+    private int minerLvl = 0;
+    private int lumberLvl = 0;
+    private int hunterLvl = 0;
+    private int farmerLvl = 0;
     private final String guildName;
     private final UUID guildUUID;
-    public String activeBuffID;
     private int guildLevel;
     private double balance;
 
@@ -36,18 +39,53 @@ public class Guild {
         this.operatorPerms.put("guild.upgrade",false);
     }
 
-    public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, double balance, String activeBuffID, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
+    public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, double balance, int minerLvl, int lumberLvl, int hunterLvl, int farmerLvl, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
         this.guildUUID=guildUUID;
         this.guildName=guildName;
         this.bannerMeta = bannerMeta;
         this.guildLevel = guildLevel;
         this.balance = balance;
-        this.activeBuffID=activeBuffID;
+        this.minerLvl=minerLvl;
+        this.lumberLvl=lumberLvl;
+        this.hunterLvl=hunterLvl;
+        this.farmerLvl=farmerLvl;
         setGuildMembers(guildMembers);
         setGuildPermissions(memberPerms,operatorPerms);
         memberList.addAll(this.guildMembers.values());
     }
 
+
+    public int getFarmerLvl() {
+        return farmerLvl;
+    }
+
+    public int getHunterLvl() {
+        return hunterLvl;
+    }
+
+    public int getLumberLvl() {
+        return lumberLvl;
+    }
+
+    public int getMinerLvl() {
+        return minerLvl;
+    }
+
+    public void setFarmerLvl(int farmerLvl) {
+        this.farmerLvl = farmerLvl;
+    }
+
+    public void setHunterLvl(int hunterLvl) {
+        this.hunterLvl = hunterLvl;
+    }
+
+    public void setMinerLvl(int minerLvl) {
+        this.minerLvl = minerLvl;
+    }
+
+    public void setLumberLvl(int lumberLvl) {
+        this.lumberLvl = lumberLvl;
+    }
 
     public boolean isGuildMember(String playerName){
         return guildMembers.containsKey(playerName);
@@ -78,12 +116,6 @@ public class Guild {
     }
     public int getGuildLevel() {
         return guildLevel;
-    }
-    public String getActiveBuffID() {
-        return activeBuffID;
-    }
-    public void setActiveBuffID(String activeBuffID) {
-        this.activeBuffID = activeBuffID;
     }
     public void setBalance(double balance) {
         this.balance = balance;

@@ -2,14 +2,15 @@
 
 general-guild:
   0:
-    name: "&eLonca Bilgileri"
+    name: "&eLonca Genel"
     type: PLAYER_HEAD
     head-value: ""
     lore:
       - ""
       - "&eİsim: %name%"
-      - "&eÜye Sayısı: %count%"
       - "&eSeviye: %level%"
+      - "&eÜye Sayısı: %count%"
+      - "&eÜye Sınırı: %limit%"
       - "&eBanka: %money%"
       - "&eAktif Geliştirme: %buff%"
       - ""
@@ -57,3 +58,29 @@ member-settings:
       - ""
   2:
     name: "&cOyuncuyu At"
+
+settings:
+  0:
+    name: "&eFlama Değiştir"
+    lore:
+      - ""
+      - "&eFlama Değişimi"
+      - ""
+  1:
+    name: "&eOperatör Yetkileri"
+    lore:
+      - ""
+      - "&eOperatör Yetkilerini Düzenle"
+      - ""
+  2:
+    name: "&eÜye Yetkileri"
+    lore:
+      - ""
+      - "&eÜye Yetkilerini Düzenle"
+      - ""
+  4:
+    name: "&cLoncayı Sil"
+    lore:
+      - ""
+      - "&eOperatör Yetkilerini Düzenle"
+      - ""

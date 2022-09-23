@@ -23,7 +23,7 @@ public class AdminCmds implements CommandExecutor {
                 Utils.sendHelpMessages(player);
             }if(args.length==1){
                 if(args[0].equalsIgnoreCase("upgrade")){
-                    if(!TridentGuild.getGuildManager().onlinePlayerGuilds.containsKey(player.getName())){
+                    if(!TridentGuild.getGuildManager().hasGuild(player)){
                         Utils.sendError(player,"you-not-guild-member");
                         return true;
                     }
@@ -42,7 +42,7 @@ public class AdminCmds implements CommandExecutor {
                     }
                     UpgradesMenu.openMenu(player);
                 }else if(args[0].equalsIgnoreCase("ayarlar")){
-                    if(!TridentGuild.getGuildManager().onlinePlayerGuilds.containsKey(player.getName())){
+                    if(!TridentGuild.getGuildManager().hasGuild(player)){
                         Utils.sendError(player,"you-not-guild-member");
                         return true;
                     }
@@ -55,7 +55,7 @@ public class AdminCmds implements CommandExecutor {
                 }
             }if(args.length==2){
                 if(args[0].equalsIgnoreCase("oluştur")){
-                    if(TridentGuild.getGuildManager().onlinePlayerGuilds.containsKey(player.getName())){
+                    if(TridentGuild.getGuildManager().hasGuild(player)){
                         Utils.sendError(player,"you-already-guild-member");
                         return true;
                     }
@@ -68,7 +68,7 @@ public class AdminCmds implements CommandExecutor {
                         return true;
                     }
                 }else if(args[0].equalsIgnoreCase("sil")){
-                    if(!TridentGuild.getGuildManager().onlinePlayerGuilds.containsKey(player.getName())){
+                    if(!TridentGuild.getGuildManager().hasGuild(player)){
                         Utils.sendError(player,"you-not-guild-member");
                         return true;
                     }
@@ -80,7 +80,7 @@ public class AdminCmds implements CommandExecutor {
                     // Tekrar onay eklenecek
                     TridentGuild.getGuildManager().removeGuild(guild);
                 }else if(args[0].equalsIgnoreCase("davet")){
-                    if(!TridentGuild.getGuildManager().onlinePlayerGuilds.containsKey(player.getName())){
+                    if(!TridentGuild.getGuildManager().hasGuild(player)){
                         Utils.sendError(player,"you-not-guild-member");
                         return true;
                     }
@@ -89,7 +89,7 @@ public class AdminCmds implements CommandExecutor {
                         Utils.sendError(player, "name-not-found");
                         return true;
                     }
-                    if(TridentGuild.getGuildManager().onlinePlayerGuilds.containsKey(args[1])){
+                    if(TridentGuild.getGuildManager().hasGuild(targetPlayer)){
                         Utils.sendError(player, "invite-already-has-guild");
                         return true;
                     }
@@ -111,7 +111,7 @@ public class AdminCmds implements CommandExecutor {
                     TridentGuild.getGuildManager().getPlayerGuild(player.getName()).addGuildMember(targetPlayer.getName());
                     player.sendMessage(Utils.addColors(Utils.getMessage("invite-sent",true)));
                 }else if(args[0].equalsIgnoreCase("at")){
-                    if(!TridentGuild.getGuildManager().onlinePlayerGuilds.containsKey(player.getName())){
+                    if(!TridentGuild.getGuildManager().hasGuild(player)){
                         Utils.sendError(player,"you-not-guild-member");
                         return true;
                     }
@@ -132,7 +132,7 @@ public class AdminCmds implements CommandExecutor {
                     }
                     guild.removeGuildMember(args[1]);
                 }else if(args[0].equalsIgnoreCase("bağış")){
-                    if(!TridentGuild.getGuildManager().onlinePlayerGuilds.containsKey(player.getName())){
+                    if(!TridentGuild.getGuildManager().hasGuild(player)){
                         Utils.sendError(player,"you-not-guild-member");
                         return true;
                     }
@@ -147,6 +147,7 @@ public class AdminCmds implements CommandExecutor {
                     guild.setBalance(guild.getBalance()+amount);
                     GuildMember guildMember = guild.getGuildMember(player.getName());
                     guildMember.setTotalDonate(guildMember.getTotalDonate()+amount);
+                    TridentGuild.getGuildManager().syncGuild(guild);
                     player.sendMessage(Utils.addColors(Utils.getMessage("number-error",true)));
                 }
             }

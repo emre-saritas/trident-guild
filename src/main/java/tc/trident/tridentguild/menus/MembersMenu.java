@@ -38,7 +38,7 @@ public class MembersMenu implements InventoryProvider {
 
     public static void openMenu(Player player){
         SmartInventory INVENTORY = SmartInventory.builder() //  Builds the menu
-                .id("guild-menu")
+                .id("guild-members")
                 .provider(new MembersMenu(player.getName()))
                 .size(3, 9)
                 .title(ChatColor.BLACK + "Lonca Üyeleri")

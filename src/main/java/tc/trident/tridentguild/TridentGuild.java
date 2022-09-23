@@ -1,18 +1,15 @@
 package tc.trident.tridentguild;
 
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.cmds.AdminCmds;
+import tc.trident.tridentguild.cmds.GuildChatMessage;
 import tc.trident.tridentguild.utils.Yaml;
 
 public class TridentGuild extends JavaPlugin {
-    public static Yaml config,messages,menus;
+    public static Yaml config,messages,menus,upgrades;
     private static TridentGuild instance;
     private static Economy econ;
     private static GuildManager guildManager;
@@ -22,7 +19,9 @@ public class TridentGuild extends JavaPlugin {
         config = new Yaml(getDataFolder() + "/config.yml", "config.yml");
         messages = new Yaml(getDataFolder() + "/messages.yml", "messages.yml");
         menus = new Yaml(getDataFolder() + "/menus.yml", "menus.yml");
+        upgrades = new Yaml(getDataFolder() + "/upgrades.yml", "upgrades.yml");
         this.getCommand("tridentguild").setExecutor((CommandExecutor) new AdminCmds());
+        this.getCommand("lmsg").setExecutor((CommandExecutor) new GuildChatMessage());
         if (!setupEconomy()) {
             getServer().getPluginManager().disablePlugin(this);
         }

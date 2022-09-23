@@ -2,6 +2,7 @@ package tc.trident.tridentguild;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,9 @@ public class GuildManager {
     }
     public Guild getPlayerGuild(String playerName){
         return loadedGuilds.get(onlinePlayerGuilds.get(playerName));
+    }
+    public boolean hasGuild(Player player){
+        return onlinePlayerGuilds.containsKey(player.getName());
     }
     public void createGuild(String playerName, String guildName){
         UUID uuid = UUID.randomUUID();
