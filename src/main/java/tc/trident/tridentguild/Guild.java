@@ -1,8 +1,11 @@
 package tc.trident.tridentguild;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import tc.trident.sync.TridentSync;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +40,7 @@ public class Guild {
         this.operatorPerms.put("guild.bannerchange",false);
         this.operatorPerms.put("guild.levelup",false);
         this.operatorPerms.put("guild.upgrade",false);
+        guildChatListener();
     }
 
     public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, double balance, int minerLvl, int lumberLvl, int hunterLvl, int farmerLvl, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
@@ -52,9 +56,30 @@ public class Guild {
         setGuildMembers(guildMembers);
         setGuildPermissions(memberPerms,operatorPerms);
         memberList.addAll(this.guildMembers.values());
+        guildChatListener();
     }
 
+    public void guildChatListener(){
+        TridentSync.getInstance().getRedis().getChannel(getGuildUUID()+"-chat", Guild.GuildChatMessage.class).newAgent().addListener((channelAgent, chatMessage) -> {
+            memberList.forEach(member -> {
+                if(member.getPlayer().isOnline()){
+                    member.getPlayer().getPlayer().sendMessage(chatMessage.getMessage());
+                }
+            });
+        });
+    }
 
+    public static class GuildChatMessage {
+        private final String message;
+
+        public GuildChatMessage(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return this.message;
+        }
+    }
     public int getFarmerLvl() {
         return farmerLvl;
     }

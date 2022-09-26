@@ -1,9 +1,11 @@
 package tc.trident.tridentguild;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
 import tc.trident.tridentguild.utils.Yaml;
@@ -39,6 +41,7 @@ public class TridentGuild extends JavaPlugin {
         econ = rsp.getProvider();
         return econ != null;
     }
+
     public static GuildManager getGuildManager() {
         return guildManager;
     }

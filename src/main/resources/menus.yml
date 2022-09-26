@@ -95,3 +95,56 @@ settings:
       - ""
       - "&eOperatör Yetkilerini Düzenle"
       - ""
+      -
+operator-perms:
+  invite:
+    name: "&eDavet Yetkisi"
+    lore:
+      - ""
+      - "&fOyuncuları davet etme yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+  kick:
+    name: "&eOyuncu Atma Yetkisi"
+    lore:
+      - ""
+      - "&fOyuncuları loncadan atma yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+  bannerchange:
+    name: "&eFlama Değiştirme Yetkisi"
+    lore:
+      - ""
+      - "&fLoncanın flamasını değiştirme"
+      - "&fyetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+  levelup:
+    name: "&eLonca Seviye Atlatma Yetkisi"
+    lore:
+      - ""
+      - "&fLoncanın seviyesini atlatma yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+  upgrade:
+    name: "&eLonca Geliştirme Yetkisi"
+    lore:
+      - ""
+      - "&fLonca geliştirmesi satın alma yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+
+member-perms:
+  invite:
+    name: "&eDavet Yetkisi"
+    lore:
+      - ""
+      - "&fOyuncuları davet etme yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
