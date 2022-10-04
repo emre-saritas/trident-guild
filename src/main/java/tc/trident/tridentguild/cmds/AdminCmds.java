@@ -93,6 +93,7 @@ public class AdminCmds implements CommandExecutor {
                         Utils.sendError(player, "invite-already-has-guild");
                         return true;
                     }
+                    // Max oyuncu kontrol
                     Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
                     switch (guild.getGuildMember(player.getName()).getPermission()){
                         case MEMBER:

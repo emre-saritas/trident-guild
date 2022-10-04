@@ -48,24 +48,24 @@ public class UpgradesMenu implements InventoryProvider {
             player.sendMessage(Utils.addColors(Utils.getMessage("guild-levelup",true)));
         }));
         item = new YamlItem("miner",TridentGuild.upgrades);
-        item.setName(item.getName().replace("%level%",guild.getMinerLvl()+""));
+        item.setName(item.getName().replace("%level%",guild.getMinerLevel()+""));
         contents.set(1,1, ClickableItem.of(item.complete(),inventoryClickEvent -> {
             clickEvent(inventoryClickEvent,"miner");
         }));
         item = new YamlItem("lumber",TridentGuild.upgrades);
-        item.setName(item.getName().replace("%level%",guild.getLumberLvl()+""));
+        item.setName(item.getName().replace("%level%",guild.getLumberLevel()+""));
         contents.set(1,3, ClickableItem.of(item.complete(),inventoryClickEvent -> {
 
             clickEvent(inventoryClickEvent,"lumber");
         }));
         item = new YamlItem("hunter",TridentGuild.upgrades);
-        item.setName(item.getName().replace("%level%",guild.getHunterLvl()+""));
+        item.setName(item.getName().replace("%level%",guild.getHunterLevel()+""));
         contents.set(1,5, ClickableItem.of(item.complete(),inventoryClickEvent -> {
             clickEvent(inventoryClickEvent,"hunter");
 
         }));
         item = new YamlItem("farmer",TridentGuild.upgrades);
-        item.setName(item.getName().replace("%level%",guild.getFarmerLvl()+""));
+        item.setName(item.getName().replace("%level%",guild.getFarmerLevel()+""));
         contents.set(1,7, ClickableItem.of(item.complete(),inventoryClickEvent -> {
 
             clickEvent(inventoryClickEvent,"farmer");
@@ -76,13 +76,13 @@ public class UpgradesMenu implements InventoryProvider {
         int upgradeLvl = 0;
         switch (upgradeID){
             case "miner":
-                upgradeLvl=guild.getMinerLvl();
+                upgradeLvl=guild.getMinerLevel();
             case "lumber":
-                upgradeLvl=guild.getLumberLvl();
+                upgradeLvl=guild.getLumberLevel();
             case "hunter":
-                upgradeLvl=guild.getHunterLvl();
+                upgradeLvl=guild.getHunterLevel();
             default:
-                upgradeLvl=guild.getFarmerLvl();
+                upgradeLvl=guild.getFarmerLevel();
         }
         if(guild.getGuildLevel() < TridentGuild.upgrades.getInt(upgradeID+".levels."+(upgradeLvl+1)+".guild-level")){
             Utils.sendError(player, "upgrade-glevel-error");
@@ -97,13 +97,13 @@ public class UpgradesMenu implements InventoryProvider {
         guild.setBalance(guild.getBalance()-TridentGuild.upgrades.getInt(upgradeID+".levels."+(upgradeLvl+1)+".price"));
         switch (upgradeID){
             case "miner":
-                guild.setMinerLvl(guild.getMinerLvl()+1);
+                guild.setMinerLevel(guild.getMinerLevel()+1);
             case "lumber":
-                guild.setLumberLvl(guild.getLumberLvl()+1);
+                guild.setLumberLevel(guild.getLumberLevel()+1);
             case "hunter":
-                guild.setHunterLvl(guild.getHunterLvl()+1);
+                guild.setHunterLevel(guild.getHunterLevel()+1);
             default:
-                guild.setFarmerLvl(guild.getFarmerLvl()+1);
+                guild.setFarmerLevel(guild.getFarmerLevel()+1);
         }
         TridentGuild.getGuildManager().syncGuild(guild);
         player.sendMessage(Utils.addColors(Utils.getMessage("upgrade-done",true)));
