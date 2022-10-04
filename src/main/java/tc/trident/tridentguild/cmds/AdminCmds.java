@@ -11,6 +11,7 @@ import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.menus.UpgradesMenu;
+import tc.trident.tridentguild.mysql.SqlUpdateType;
 import tc.trident.tridentguild.utils.Utils;
 
 public class AdminCmds implements CommandExecutor {
@@ -145,11 +146,12 @@ public class AdminCmds implements CommandExecutor {
                         Utils.sendError(player, "number-error");
                         return true;
                     }
-                    guild.setBalance(guild.getBalance()+amount);
+                    TridentGuild.getEcon().withdrawPlayer(player, amount);
+                    guild.setBalance(guild.getBalance()+(float)amount);
                     GuildMember guildMember = guild.getGuildMember(player.getName());
-                    guildMember.setTotalDonate(guildMember.getTotalDonate()+amount);
-                    TridentGuild.getGuildManager().syncGuild(guild);
-                    player.sendMessage(Utils.addColors(Utils.getMessage("number-error",true)));
+                    guildMember.setTotalDonate(guildMember.getTotalDonate()+(float)amount);
+                    TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
+                    player.sendMessage(Utils.addColors(Utils.getMessage("donated",true)));
                 }
             }
         }else{

@@ -4,6 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+import tc.trident.sync.TridentSync;
+import tc.trident.tridentguild.mysql.SqlUpdateType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +24,7 @@ public class Guild {
     private int hunterLevel = 0;
     private int farmerLevel = 0;
     private int guildLevel;
-    private double balance;
+    private float balance;
 
     public Guild(UUID guildUUID, String guildName){
         this.guildUUID=guildUUID;
@@ -37,9 +39,10 @@ public class Guild {
         this.operatorPerms.put("guild.bannerchange",false);
         this.operatorPerms.put("guild.levelup",false);
         this.operatorPerms.put("guild.upgrade",false);
+        guildChatListener();
     }
 
-    public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, double balance, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
+    public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, float balance, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
         this.guildUUID=guildUUID;
         this.guildName=guildName;
         //this.bannerMeta = bannerMeta;
@@ -52,6 +55,7 @@ public class Guild {
         setGuildMembers(guildMembers);
         setGuildPermissions(memberPerms,operatorPerms);
         memberList.addAll(this.guildMembers.values());
+        guildChatListener();
     }
 
 
@@ -79,6 +83,27 @@ public class Guild {
         String[] bools = str.split(";");
         map.put("guild.invite",Boolean.valueOf(bools[0]));
         return map;
+    }
+
+
+    public void guildChatListener(){
+        TridentSync.getInstance().getRedis().getChannel(getGuildUUID()+"-chat",Guild.GuildChatMessage.class).newAgent().addListener(((channelAgent, guildChatMessage) -> {
+            memberList.forEach(guildMember -> {
+                if(guildMember.getPlayer().isOnline()){
+                    guildMember.getPlayer().getPlayer().sendMessage(guildChatMessage.getMessage());
+                }
+            });
+        }));
+    }
+
+    public static class GuildChatMessage{
+        private final String message;
+        public GuildChatMessage(String message){
+            this.message = message;
+        }
+        public String getMessage(){
+            return this.message;
+        }
     }
     public boolean isGuildMember(String playerName){
         return guildMembers.containsKey(playerName);
@@ -143,10 +168,10 @@ public class Guild {
         return minerLevel;
     }
 
-    public void setBalance(double balance) {
+    public void setBalance(float balance) {
         this.balance = balance;
     }
-    public double getBalance() {
+    public float getBalance() {
         return balance;
     }
     public void setGuildMembers(List<GuildMember> guildMembers) {
@@ -174,10 +199,10 @@ public class Guild {
         GuildMember guildMember = new GuildMember(playerName);
         guildMembers.put(playerName,guildMember);
         memberList.add(guildMember);
-        TridentGuild.getGuildManager().syncGuild(this);
+        TridentGuild.getGuildManager().syncGuild(this, SqlUpdateType.UPDATE);
     }
     public void removeGuildMember(String playerName){
         guildMembers.remove(playerName);
-        TridentGuild.getGuildManager().syncGuild(this);
+        TridentGuild.getGuildManager().syncGuild(this, SqlUpdateType.UPDATE);
     }
 }

@@ -8,7 +8,7 @@ public class GuildMember {
 
     private OfflinePlayer player;
     private GuildPermission permission;
-    private int totalDonate = 0;
+    private float totalDonate = 0;
 
     public GuildMember(String playerName){
         this.player = Bukkit.getOfflinePlayer(playerName);
@@ -40,11 +40,11 @@ public class GuildMember {
         this.permission=GuildPermission.MEMBER;
     }
 
-    public int getTotalDonate() {
+    public float getTotalDonate() {
         return totalDonate;
     }
 
-    public void setTotalDonate(int totalDonate) {
+    public void setTotalDonate(float totalDonate) {
         this.totalDonate = totalDonate;
     }
 

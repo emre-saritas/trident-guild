@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.mysql.SqlUpdateType;
 import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
 
@@ -26,7 +27,7 @@ public class SettingsMenu implements InventoryProvider {
     public void init(Player player, InventoryContents contents){
         YamlItem item = new YamlItem("settings.0",TridentGuild.menus);
         ItemStack banner = item.complete();
-        banner.setItemMeta(guild.getBannerMeta());
+        //banner.setItemMeta(guild.getBannerMeta());
         ItemMeta meta = banner.getItemMeta();
         meta.setLore(item.getLore());
         meta.setDisplayName(item.getName());
@@ -35,8 +36,8 @@ public class SettingsMenu implements InventoryProvider {
             ItemStack newBanner = player.getInventory().getItemInMainHand();
             if(newBanner.getType().toString().contains("BANNER") && !newBanner.getType().toString().contains("BANNER_PATTERN")){
                 BannerMeta newMeta = (BannerMeta) newBanner.getItemMeta();
-                guild.setBannerMeta(newMeta);
-                TridentGuild.getGuildManager().syncGuild(guild);
+                //guild.setBannerMeta(newMeta);
+                TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
                 player.sendMessage(Utils.addColors(Utils.getMessage("banner-set",true)));
                 player.closeInventory();
             }else{

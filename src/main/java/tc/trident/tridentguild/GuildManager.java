@@ -3,6 +3,8 @@ package tc.trident.tridentguild;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import tc.trident.tridentguild.mysql.SqlUpdateType;
+import tc.trident.tridentguild.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,17 +19,52 @@ public class GuildManager {
     public List<String> guildNames = new ArrayList<>();
 
     public GuildManager(){
-        //loadOnlinePlayerGuildUUIDs();
-        //loadOnlinePlayerGuilds();
+        loadOnlinePlayerGuildUUIDs();
+        loadOnlineGuilds();
     }
 
 
+
+
+    public void syncGuild(Guild guild, SqlUpdateType updateType){
+        if(updateType == SqlUpdateType.UPDATE){
+            TridentGuild.getSqlHandler().updateGuild(guild.getGuildUUID().toString(),
+                    guild.getGuildName(),
+                    guild.getGuildLevel(),
+                    guild.getMinerLevel(),
+                    guild.getLumberLevel(),
+                    guild.getHunterLevel(),
+                    guild.getFarmerLevel(),
+                    guild.getBalance(),
+                    null,
+                    Guild.serializePerms(guild.getMemberPerms()),
+                    Guild.serializePerms(guild.getOperatorPerms()));
+
+        }else if(updateType == SqlUpdateType.REMOVE){
+            TridentGuild.getSqlHandler().deleteGuild(guild.getGuildUUID().toString());
+        }
+
+        // message to other servers
+    }
+    public void syncGuildMember(GuildMember member, UUID guildUUID,SqlUpdateType updateType){
+
+        if(updateType == SqlUpdateType.UPDATE){
+            TridentGuild.getSqlHandler().updateGuildMember(member.getPlayer().getName(),
+                    guildUUID.toString(),
+                    member.getPermission().toString(),
+                    member.getTotalDonate());
+        }else if(updateType == SqlUpdateType.REMOVE){
+            TridentGuild.getSqlHandler().deleteGuildMember(member.getPlayer().getName());
+        }
+
+        // message to other servers
+    }
     public void loadOnlinePlayerGuildUUIDs(){
-
-    }
-
-    public void syncGuild(Guild guild){
-
+        Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+            UUID uuid = TridentGuild.getSqlHandler().getGuildUUID(player.getName());
+            if(uuid != null)
+                onlinePlayerGuilds.put(player.getName(),uuid);
+        });
     }
     public void loadOnlineGuilds(){
         Bukkit.getServer().getOnlinePlayers().forEach(player -> {
@@ -37,6 +74,12 @@ public class GuildManager {
         });
     }
 
+
+    public void loadGuild(UUID guildUUID){
+        Guild guild = TridentGuild.getSqlHandler().getGuild(guildUUID.toString());
+        loadedGuilds.put(guildUUID,guild);
+        guildNames.add(guild.getGuildName());
+    }
     public boolean hasGuild(Player player){
         return onlinePlayerGuilds.containsKey(player.getName());
     }
@@ -54,7 +97,7 @@ public class GuildManager {
         loadedGuilds.put(uuid,guild);
         onlinePlayerGuilds.put(playerName,uuid);
         guildNames.add(guildName);
-        TridentGuild.getGuildManager().syncGuild(guild);
+        TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
     }
     public void removeGuild(Guild guild){
         guildNames.remove(guild.getGuildName());
@@ -62,12 +105,10 @@ public class GuildManager {
         guild.guildMembers.forEach((name,gMember)->{
             onlinePlayerGuilds.remove(name);
         });
-        loadedGuilds.remove(uuid);
-        TridentGuild.getGuildManager().syncGuild(guild);
+        unloadGuild(uuid);
+        TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.REMOVE);
     }
-    public void loadGuild(UUID guildUUID){
-        loadedGuilds.put(guildUUID,null);
-    }
+
     public void unloadGuild(UUID guildUUID){
         loadedGuilds.remove(guildUUID);
     }

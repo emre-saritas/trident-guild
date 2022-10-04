@@ -60,7 +60,7 @@ public class MySQL {
     public Connection getConnection() {
         try {
             if (!this.conn.isValid(1)) {
-                System.out.println("[SkyNoticer] Lost MySQL-Connection! Reconnecting...");
+                System.out.println("[TridentGuild] Lost MySQL-Connection! Reconnecting...");
 
                 try {
                     this.conn = this.openConnection();
@@ -96,7 +96,7 @@ public class MySQL {
 
             }
         } catch (SQLException var20) {
-            System.out.println("[SkyNoticer] SELECT 1 - failled. Reconnecting...");
+            System.out.println("[TridentGuild] SELECT 1 - failled. Reconnecting...");
 
             try {
                 this.conn = this.openConnection();
