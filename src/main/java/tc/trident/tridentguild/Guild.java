@@ -1,11 +1,9 @@
 package tc.trident.tridentguild;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
-import tc.trident.sync.TridentSync;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,17 +11,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class Guild {
-    private BannerMeta bannerMeta;
     public HashMap<String, GuildMember> guildMembers = new HashMap<>();
     public List<GuildMember> memberList = new ArrayList<>();
     public HashMap<String, Boolean> memberPerms = new HashMap<>();
     public HashMap<String, Boolean> operatorPerms = new HashMap<>();
-    private int minerLvl = 0;
-    private int lumberLvl = 0;
-    private int hunterLvl = 0;
-    private int farmerLvl = 0;
     private final String guildName;
     private final UUID guildUUID;
+    private int minerLevel = 0;
+    private int lumberLevel = 0;
+    private int hunterLevel = 0;
+    private int farmerLevel = 0;
     private int guildLevel;
     private double balance;
 
@@ -31,7 +28,7 @@ public class Guild {
         this.guildUUID=guildUUID;
         this.guildName=guildName;
         ItemStack bannerItem = new ItemStack(Material.WHITE_BANNER);
-        this.bannerMeta = (BannerMeta) bannerItem.getItemMeta();
+        //this.bannerMeta = (BannerMeta) bannerItem.getItemMeta();
         this.guildLevel = 0;
         this.balance = 0;
         this.memberPerms.put("guild.invite",false);
@@ -40,78 +37,49 @@ public class Guild {
         this.operatorPerms.put("guild.bannerchange",false);
         this.operatorPerms.put("guild.levelup",false);
         this.operatorPerms.put("guild.upgrade",false);
-        guildChatListener();
     }
 
-    public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, double balance, int minerLvl, int lumberLvl, int hunterLvl, int farmerLvl, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
+    public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, double balance, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
         this.guildUUID=guildUUID;
         this.guildName=guildName;
-        this.bannerMeta = bannerMeta;
+        //this.bannerMeta = bannerMeta;
         this.guildLevel = guildLevel;
+        this.minerLevel = minerLevel;
+        this.lumberLevel = lumberLevel;
+        this.hunterLevel = hunterLevel;
+        this.farmerLevel = farmerLevel;
         this.balance = balance;
-        this.minerLvl=minerLvl;
-        this.lumberLvl=lumberLvl;
-        this.hunterLvl=hunterLvl;
-        this.farmerLvl=farmerLvl;
         setGuildMembers(guildMembers);
         setGuildPermissions(memberPerms,operatorPerms);
         memberList.addAll(this.guildMembers.values());
-        guildChatListener();
     }
 
-    public void guildChatListener(){
-        TridentSync.getInstance().getRedis().getChannel(getGuildUUID()+"-chat", Guild.GuildChatMessage.class).newAgent().addListener((channelAgent, chatMessage) -> {
-            memberList.forEach(member -> {
-                if(member.getPlayer().isOnline()){
-                    member.getPlayer().getPlayer().sendMessage(chatMessage.getMessage());
-                }
-            });
+
+
+    public static String serializePerms(HashMap<String, Boolean> perms){
+        String ser = "";
+        StringBuilder sb = new StringBuilder(ser);
+        perms.forEach((permID, bool) -> {
+            sb.append(bool).append(";");
         });
+        return sb.toString();
     }
-
-    public static class GuildChatMessage {
-        private final String message;
-
-        public GuildChatMessage(String message) {
-            this.message = message;
-        }
-
-        public String getMessage() {
-            return this.message;
-        }
+    public static HashMap<String, Boolean> deserializeOpPerms(String str){
+        HashMap<String, Boolean> map = new HashMap<>();
+        String[] bools = str.split(";");
+        map.put("guild.invite",Boolean.valueOf(bools[0]));
+        map.put("guild.kick",Boolean.valueOf(bools[1]));
+        map.put("guild.bannerchange",Boolean.valueOf(bools[2]));
+        map.put("guild.levelup",Boolean.valueOf(bools[3]));
+        map.put("guild.upgrade",Boolean.valueOf(bools[4]));
+        return map;
     }
-    public int getFarmerLvl() {
-        return farmerLvl;
+    public static HashMap<String, Boolean> deserializeMemberPerms(String str){
+        HashMap<String, Boolean> map = new HashMap<>();
+        String[] bools = str.split(";");
+        map.put("guild.invite",Boolean.valueOf(bools[0]));
+        return map;
     }
-
-    public int getHunterLvl() {
-        return hunterLvl;
-    }
-
-    public int getLumberLvl() {
-        return lumberLvl;
-    }
-
-    public int getMinerLvl() {
-        return minerLvl;
-    }
-
-    public void setFarmerLvl(int farmerLvl) {
-        this.farmerLvl = farmerLvl;
-    }
-
-    public void setHunterLvl(int hunterLvl) {
-        this.hunterLvl = hunterLvl;
-    }
-
-    public void setMinerLvl(int minerLvl) {
-        this.minerLvl = minerLvl;
-    }
-
-    public void setLumberLvl(int lumberLvl) {
-        this.lumberLvl = lumberLvl;
-    }
-
     public boolean isGuildMember(String playerName){
         return guildMembers.containsKey(playerName);
     }
@@ -142,17 +110,44 @@ public class Guild {
     public int getGuildLevel() {
         return guildLevel;
     }
+
+    public void setFarmerLevel(int farmerLevel) {
+        this.farmerLevel = farmerLevel;
+    }
+
+    public void setHunterLevel(int hunterLevel) {
+        this.hunterLevel = hunterLevel;
+    }
+
+    public void setLumberLevel(int lumberLevel) {
+        this.lumberLevel = lumberLevel;
+    }
+
+    public void setMinerLevel(int minerLevel) {
+        this.minerLevel = minerLevel;
+    }
+
+    public int getFarmerLevel() {
+        return farmerLevel;
+    }
+
+    public int getHunterLevel() {
+        return hunterLevel;
+    }
+
+    public int getLumberLevel() {
+        return lumberLevel;
+    }
+
+    public int getMinerLevel() {
+        return minerLevel;
+    }
+
     public void setBalance(double balance) {
         this.balance = balance;
     }
     public double getBalance() {
         return balance;
-    }
-    public void setBannerMeta(BannerMeta bannerMeta) {
-        this.bannerMeta = bannerMeta;
-    }
-    public BannerMeta getBannerMeta() {
-        return bannerMeta;
     }
     public void setGuildMembers(List<GuildMember> guildMembers) {
         guildMembers.forEach(guildMember -> {
@@ -166,8 +161,8 @@ public class Guild {
         operatorPerms.put(permKey,state);
     }
     public void setGuildPermissions(HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
-        this.memberPerms.putAll(memberPerms);
-        this.operatorPerms.putAll(operatorPerms);
+        this.memberPerms = new HashMap<>(memberPerms);
+        this.operatorPerms = new HashMap<>(operatorPerms);
     }
     public HashMap<String, Boolean> getMemberPerms() {
         return memberPerms;

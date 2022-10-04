@@ -36,14 +36,15 @@ public class GuildManager {
             }
         });
     }
+
+    public boolean hasGuild(Player player){
+        return onlinePlayerGuilds.containsKey(player.getName());
+    }
     public boolean isGuildLoaded(String playerName){
         return loadedGuilds.containsKey(onlinePlayerGuilds.get(playerName));
     }
     public Guild getPlayerGuild(String playerName){
         return loadedGuilds.get(onlinePlayerGuilds.get(playerName));
-    }
-    public boolean hasGuild(Player player){
-        return onlinePlayerGuilds.containsKey(player.getName());
     }
     public void createGuild(String playerName, String guildName){
         UUID uuid = UUID.randomUUID();
