@@ -150,6 +150,7 @@ public class AdminCmds implements CommandExecutor {
                     guild.setBalance(guild.getBalance()+(float)amount);
                     GuildMember guildMember = guild.getGuildMember(player.getName());
                     guildMember.setTotalDonate(guildMember.getTotalDonate()+(float)amount);
+                    TridentGuild.getGuildManager().syncGuildMember(guildMember, guild.getGuildUUID(), SqlUpdateType.UPDATE);
                     TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
                     player.sendMessage(Utils.addColors(Utils.getMessage("donated",true)));
                 }

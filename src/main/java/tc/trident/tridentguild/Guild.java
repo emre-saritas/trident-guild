@@ -199,9 +199,11 @@ public class Guild {
         GuildMember guildMember = new GuildMember(playerName);
         guildMembers.put(playerName,guildMember);
         memberList.add(guildMember);
+        TridentGuild.getGuildManager().syncGuildMember(guildMember, getGuildUUID(),SqlUpdateType.UPDATE);
         TridentGuild.getGuildManager().syncGuild(this, SqlUpdateType.UPDATE);
     }
     public void removeGuildMember(String playerName){
+        TridentGuild.getGuildManager().syncGuildMember(guildMembers.get(playerName), getGuildUUID(),SqlUpdateType.REMOVE);
         guildMembers.remove(playerName);
         TridentGuild.getGuildManager().syncGuild(this, SqlUpdateType.UPDATE);
     }

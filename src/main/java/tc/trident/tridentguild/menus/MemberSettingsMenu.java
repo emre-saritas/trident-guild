@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.mysql.SqlUpdateType;
 import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
 
@@ -34,6 +35,8 @@ public class MemberSettingsMenu implements InventoryProvider {
                    return;
                }
                member.setPermission(GuildMember.GuildPermission.OPERATOR);
+               TridentGuild.getGuildManager().syncGuildMember(member,guild.getGuildUUID(), SqlUpdateType.UPDATE);
+               TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
                player.sendMessage(Utils.addColors(Utils.getMessage("member-rank-up",true)));
                player.closeInventory();
            } else if (inventoryClickEvent.isRightClick()) {
@@ -43,6 +46,8 @@ public class MemberSettingsMenu implements InventoryProvider {
                    return;
                }
                member.setPermission(GuildMember.GuildPermission.MEMBER);
+               TridentGuild.getGuildManager().syncGuildMember(member,guild.getGuildUUID(), SqlUpdateType.UPDATE);
+               TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
                player.sendMessage(Utils.addColors(Utils.getMessage("member-rank-down",true)));
                player.closeInventory();
            }
