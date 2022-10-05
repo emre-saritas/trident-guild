@@ -1,17 +1,15 @@
 package tc.trident.tridentguild.cmds;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.menus.UpgradesMenu;
-import tc.trident.tridentguild.mysql.SqlUpdateType;
+import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
 
 public class AdminCmds implements CommandExecutor {
@@ -79,7 +77,7 @@ public class AdminCmds implements CommandExecutor {
                         return true;
                     }
                     // Tekrar onay eklenecek
-                    TridentGuild.getGuildManager().removeGuild(guild);
+                    TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
                 }else if(args[0].equalsIgnoreCase("davet")){
                     if(!TridentGuild.getGuildManager().hasGuild(player)){
                         Utils.sendError(player,"you-not-guild-member");
@@ -150,8 +148,9 @@ public class AdminCmds implements CommandExecutor {
                     guild.setBalance(guild.getBalance()+(float)amount);
                     GuildMember guildMember = guild.getGuildMember(player.getName());
                     guildMember.setTotalDonate(guildMember.getTotalDonate()+(float)amount);
-                    TridentGuild.getGuildManager().syncGuildMember(guildMember, guild.getGuildUUID(), SqlUpdateType.UPDATE);
-                    TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
+                    TridentGuild.getGuildManager().syncGuildMember(guildMember, guild.getGuildUUID(), SyncType.UPDATE);
+                    TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
+                    TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
                     player.sendMessage(Utils.addColors(Utils.getMessage("donated",true)));
                 }
             }

@@ -10,6 +10,7 @@ import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
 import tc.trident.tridentguild.mysql.MySQL;
 import tc.trident.tridentguild.mysql.MySQLHandler;
+import tc.trident.tridentguild.mysql.SyncManager;
 import tc.trident.tridentguild.utils.Yaml;
 
 public class TridentGuild extends JavaPlugin {
@@ -17,6 +18,7 @@ public class TridentGuild extends JavaPlugin {
     private static MySQLHandler sqlHandler;
     private static MySQL sql;
     private static TridentGuild instance;
+    private static SyncManager syncManager;
     private static Economy econ;
     private static GuildManager guildManager;
 
@@ -31,6 +33,7 @@ public class TridentGuild extends JavaPlugin {
             sql = new MySQL(this);
             sqlHandler = new MySQLHandler(getSql(),this);
 
+            syncManager = new SyncManager();
             guildManager = new GuildManager();
             this.getCommand("tridentguild").setExecutor((CommandExecutor) new AdminCmds());
             this.getCommand("lmsg").setExecutor((CommandExecutor) new GuildChatMessage());
@@ -63,6 +66,9 @@ public class TridentGuild extends JavaPlugin {
     }
     public static GuildManager getGuildManager() {
         return guildManager;
+    }
+    public static SyncManager getSyncManager() {
+        return syncManager;
     }
     public static TridentGuild getInstance() {
         return instance;

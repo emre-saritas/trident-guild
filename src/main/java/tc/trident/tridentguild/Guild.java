@@ -1,11 +1,10 @@
 package tc.trident.tridentguild;
 
 import org.bukkit.Material;
-import org.bukkit.block.banner.Pattern;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import tc.trident.sync.TridentSync;
-import tc.trident.tridentguild.mysql.SqlUpdateType;
+import tc.trident.tridentguild.mysql.SyncType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,7 +86,7 @@ public class Guild {
 
 
     public void guildChatListener(){
-        TridentSync.getInstance().getRedis().getChannel(getGuildUUID()+"-chat",Guild.GuildChatMessage.class).newAgent().addListener(((channelAgent, guildChatMessage) -> {
+        TridentSync.getInstance().getRedis().getChannel("s"+getGuildUUID()+"-chat",Guild.GuildChatMessage.class).newAgent().addListener(((channelAgent, guildChatMessage) -> {
             memberList.forEach(guildMember -> {
                 if(guildMember.getPlayer().isOnline()){
                     guildMember.getPlayer().getPlayer().sendMessage(guildChatMessage.getMessage());
@@ -199,12 +198,14 @@ public class Guild {
         GuildMember guildMember = new GuildMember(playerName);
         guildMembers.put(playerName,guildMember);
         memberList.add(guildMember);
-        TridentGuild.getGuildManager().syncGuildMember(guildMember, getGuildUUID(),SqlUpdateType.UPDATE);
-        TridentGuild.getGuildManager().syncGuild(this, SqlUpdateType.UPDATE);
+        TridentGuild.getSyncManager().syncGuild(this,SyncType.UPDATE);
+        TridentGuild.getGuildManager().syncGuildMember(guildMember, getGuildUUID(), SyncType.UPDATE);
+        TridentGuild.getGuildManager().syncGuild(this, SyncType.UPDATE);
     }
     public void removeGuildMember(String playerName){
-        TridentGuild.getGuildManager().syncGuildMember(guildMembers.get(playerName), getGuildUUID(),SqlUpdateType.REMOVE);
+        TridentGuild.getGuildManager().syncGuildMember(guildMembers.get(playerName), getGuildUUID(), SyncType.REMOVE_PLAYER);
         guildMembers.remove(playerName);
-        TridentGuild.getGuildManager().syncGuild(this, SqlUpdateType.UPDATE);
+        TridentGuild.getSyncManager().syncGuild(this,SyncType.REMOVE_PLAYER);
+        TridentGuild.getGuildManager().syncGuild(this, SyncType.REMOVE_PLAYER);
     }
 }

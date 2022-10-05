@@ -12,7 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
-import tc.trident.tridentguild.mysql.SqlUpdateType;
+import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
 
@@ -37,7 +37,8 @@ public class SettingsMenu implements InventoryProvider {
             if(newBanner.getType().toString().contains("BANNER") && !newBanner.getType().toString().contains("BANNER_PATTERN")){
                 BannerMeta newMeta = (BannerMeta) newBanner.getItemMeta();
                 //guild.setBannerMeta(newMeta);
-                TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
+                TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
+                TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
                 player.sendMessage(Utils.addColors(Utils.getMessage("banner-set",true)));
                 player.closeInventory();
             }else{
@@ -70,7 +71,7 @@ public class SettingsMenu implements InventoryProvider {
                 player.closeInventory();
                 return;
             }
-            TridentGuild.getGuildManager().removeGuild(guild);
+            TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
         }));
     }
 

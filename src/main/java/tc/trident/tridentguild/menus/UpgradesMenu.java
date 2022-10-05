@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
-import tc.trident.tridentguild.mysql.SqlUpdateType;
+import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
 
@@ -45,7 +45,8 @@ public class UpgradesMenu implements InventoryProvider {
                 }
             }
             guild.setBalance(guild.getBalance()-TridentGuild.upgrades.getInt("guild.levels."+(guildLevel+1)+".price"));
-            TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
+            TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
+            TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
             player.sendMessage(Utils.addColors(Utils.getMessage("guild-levelup",true)));
         }));
         item = new YamlItem("miner",TridentGuild.upgrades);
@@ -106,7 +107,8 @@ public class UpgradesMenu implements InventoryProvider {
             default:
                 guild.setFarmerLevel(guild.getFarmerLevel()+1);
         }
-        TridentGuild.getGuildManager().syncGuild(guild, SqlUpdateType.UPDATE);
+        TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
+        TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
         player.sendMessage(Utils.addColors(Utils.getMessage("upgrade-done",true)));
     }
 

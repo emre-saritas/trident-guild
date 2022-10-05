@@ -25,7 +25,7 @@ public class GuildChatMessage implements CommandExecutor {
             String text = StringUtils.join(args," ");
             String message = ChatColor.translateAlternateColorCodes('&',"&f[&dLonca&f] &e"+player.getName()+": &f");
             Guild.GuildChatMessage gchat = new Guild.GuildChatMessage(message+text);
-            TridentSync.getInstance().getRedis().getChannel(guild.getGuildUUID()+"-chat", Guild.GuildChatMessage.class).sendMessage(gchat);
+            TridentSync.getInstance().getRedis().getChannel("s"+guild.getGuildUUID()+"-chat", Guild.GuildChatMessage.class).sendMessage(gchat);
 
         }else{
             Utils.sendError(player,"you-not-guild-member");
