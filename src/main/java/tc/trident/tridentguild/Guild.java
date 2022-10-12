@@ -84,7 +84,15 @@ public class Guild {
         return map;
     }
 
-
+    public int getMaxPlayers(){
+        return TridentGuild.config.getInt("guild.levels."+guildLevel+".limit");
+    }
+    public boolean isGuildFull(){
+        return getMaxPlayers() <= getGuildSize();
+    }
+    public int getGuildSize(){
+        return memberList.size();
+    }
     public void guildChatListener(){
         TridentSync.getInstance().getRedis().getChannel("s"+getGuildUUID()+"-chat",Guild.GuildChatMessage.class).newAgent().addListener(((channelAgent, guildChatMessage) -> {
             memberList.forEach(guildMember -> {

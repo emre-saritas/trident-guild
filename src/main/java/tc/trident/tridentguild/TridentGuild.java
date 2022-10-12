@@ -8,17 +8,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
+import tc.trident.tridentguild.cmds.GuildCmds;
+import tc.trident.tridentguild.invite.InviteHandler;
 import tc.trident.tridentguild.mysql.MySQL;
 import tc.trident.tridentguild.mysql.MySQLHandler;
+import tc.trident.tridentguild.mysql.MySQLManager;
+import tc.trident.tridentguild.mysql.SyncManager;
 import tc.trident.tridentguild.utils.Yaml;
 
 public class TridentGuild extends JavaPlugin {
     public static Yaml config,messages,menus,upgrades;
-    private static MySQLHandler sqlHandler;
-    private static MySQL sql;
     private static TridentGuild instance;
+    private static MySQLManager sqlManager;
     private static Economy econ;
     private static GuildManager guildManager;
+    private static SyncManager syncManager;
+    private static InviteHandler inviteHandler;
 
     public void onEnable() {
         instance = this;
@@ -28,11 +33,12 @@ public class TridentGuild extends JavaPlugin {
         upgrades = new Yaml(getDataFolder() + "/upgrades.yml", "upgrades.yml");
 
         try{
-            sql = new MySQL(this);
-            sqlHandler = new MySQLHandler(getSql(),this);
-
+            syncManager = new SyncManager();
+            sqlManager = new MySQLManager(this);
             guildManager = new GuildManager();
+            inviteHandler = new InviteHandler();
             this.getCommand("tridentguild").setExecutor((CommandExecutor) new AdminCmds());
+            this.getCommand("lonca").setExecutor((CommandExecutor) new GuildCmds());
             this.getCommand("lmsg").setExecutor((CommandExecutor) new GuildChatMessage());
             if (!setupEconomy()) {
                 getServer().getPluginManager().disablePlugin(this);
@@ -41,6 +47,11 @@ public class TridentGuild extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public void onDisable() {
+        inviteHandler.close();
+        syncManager.close();
     }
 
     private boolean setupEconomy() {
@@ -55,11 +66,17 @@ public class TridentGuild extends JavaPlugin {
         return econ != null;
     }
 
-    public static MySQL getSql() {
-        return sql;
+    public static InviteHandler getInviteHandler() {
+        return inviteHandler;
     }
-    public static MySQLHandler getSqlHandler() {
-        return sqlHandler;
+    public static MySQLManager getSqlManager() {
+        return sqlManager;
+    }
+    public static MySQLHandler getSqlHandler(){
+        return MySQLManager.mysqlHandler;
+    }
+    public static SyncManager getSyncManager() {
+        return syncManager;
     }
     public static GuildManager getGuildManager() {
         return guildManager;

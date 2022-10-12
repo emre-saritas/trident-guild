@@ -1,5 +1,6 @@
 package tc.trident.tridentguild.cmds;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -12,6 +13,8 @@ import tc.trident.tridentguild.menus.GeneralGuildMenu;
 import tc.trident.tridentguild.menus.UpgradesMenu;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
+
+import java.nio.Buffer;
 
 public class GuildCmds implements CommandExecutor {
 
@@ -70,10 +73,19 @@ public class GuildCmds implements CommandExecutor {
                         Utils.sendError(player, "not-owner");
                         return true;
                     }
-                    // Tekrar onay eklenecek
-                    TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
-                    TridentGuild.getSyncManager().syncGuild(guild,SyncType.REMOVE_GUILD);
-                    TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.REMOVE_GUILD);
+
+                    // Silmek için onaylama
+                    if(!TridentGuild.getInviteHandler().isGuildDeleteCooldownExpired(player.getName())){
+                        TridentGuild.getInviteHandler().removeGuildDeleteCooldown(player.getName());
+                        TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
+                        TridentGuild.getSyncManager().syncGuild(guild,SyncType.REMOVE_GUILD);
+                        TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.REMOVE_GUILD);
+                    }else{
+                        TridentGuild.getInviteHandler().addGuildDeleteCooldown(player.getName());
+                        player.sendMessage(Utils.addColors(Utils.getMessage("guild-remove-again",true)));
+                    }
+
+
                 } else if (args[0].equalsIgnoreCase("yardım")) {
                     Utils.sendHelpMessages(player);
                 }
@@ -106,8 +118,14 @@ public class GuildCmds implements CommandExecutor {
                         Utils.sendError(player, "invite-already-has-guild");
                         return true;
                     }
-                    // Max oyuncu kontrol
                     Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
+
+                    if(guild.isGuildFull()){
+                        Utils.sendError(player,"guild-full");
+                        return true;
+                    }
+
+
                     switch (guild.getGuildMember(player.getName()).getPermission()) {
                         case MEMBER:
                             if (!guild.memberPerms.get("guild.invite")) {
@@ -121,8 +139,8 @@ public class GuildCmds implements CommandExecutor {
                                 return true;
                             }
                     }
-                    // Davet istek vs vs
-                    TridentGuild.getGuildManager().getPlayerGuild(player.getName()).addGuildMember(args[1]);
+
+                    TridentGuild.getInviteHandler().sendInvite(player.getName(), args[1]);
                     player.sendMessage(Utils.addColors(Utils.getMessage("invite-sent", true).replace("%player%", args[1])));
                 } else if (args[0].equalsIgnoreCase("at")) {
                     if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {

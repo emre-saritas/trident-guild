@@ -28,6 +28,7 @@ public class MySQLManager {
 
     }
 
+
     public void startRefresh() {
         Bukkit.getScheduler().runTaskTimerAsynchronously(this.plugin, new Runnable() {
             public void run() {

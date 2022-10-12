@@ -1,5 +1,6 @@
 package tc.trident.tridentguild.invite;
 
+import me.lucko.helper.messaging.ChannelAgent;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -15,6 +16,8 @@ public class InviteHandler {
     private HashMap<String, Invite> playerInvites = new HashMap<>();
     private HashMap<String, Long> playerGuildDeletes = new HashMap<>();
     private BukkitTask inviteController;
+
+    private ChannelAgent<InviteRedisData> agent7;
 
     public InviteHandler(){
         setupInviteListener();
@@ -36,12 +39,18 @@ public class InviteHandler {
     };
 
     public void removeGuildDeleteCooldown(String playerName){
-        playerGuildDeletes.remove(playerName);
+        if(playerGuildDeletes.containsKey(playerName))
+            playerGuildDeletes.remove(playerName);
     }
     public void addGuildDeleteCooldown(String playerName){
-        playerGuildDeletes.replace(playerName, System.currentTimeMillis());
+        if(playerGuildDeletes.containsKey(playerName))
+            playerGuildDeletes.replace(playerName, System.currentTimeMillis());
+        else
+            playerGuildDeletes.put(playerName, System.currentTimeMillis());
     }
     public boolean isGuildDeleteCooldownExpired(String playerName){
+        if(!playerGuildDeletes.containsKey(playerName)) return true;
+        Bukkit.getPlayerExact("EmreSaritas").sendMessage(System.currentTimeMillis() + " " +playerGuildDeletes.get(playerName)+5000L);
         return System.currentTimeMillis() >= playerGuildDeletes.get(playerName)+5000L;
     }
     public void sendInvite(String sendingPlayer, String targetPlayer){
@@ -56,7 +65,9 @@ public class InviteHandler {
         TridentSync.getInstance().getRedis().getChannel("sGuildInvite",InviteRedisData.class).sendMessage(new InviteRedisData(sendingPlayer,targetPlayer,invite,dataType));
     }
     public void setupInviteListener(){
-        TridentSync.getInstance().getRedis().getChannel("sGuildInvite",InviteRedisData.class).newAgent().addListener(((channelAgent, inviteRedisData) -> {
+        agent7 = TridentSync.getInstance().getRedis().getChannel("sGuildInvite",InviteRedisData.class).newAgent();
+
+        agent7.addListener(((channelAgent, inviteRedisData) -> {
             if(!Bukkit.getServer().getOnlinePlayers().contains(Bukkit.getPlayerExact(inviteRedisData.getTargetPlayerName()))) return;
             switch (inviteRedisData.getDataType()){
                 case INVITE:
@@ -64,7 +75,7 @@ public class InviteHandler {
                         sendMessage(inviteRedisData.getTargetPlayerName(),inviteRedisData.getSendingPlayer(), InviteRedisData.InviteDataType.ERROR_HAS_INVITE);
                         break;
                     }
-                    if(TridentGuild.getGuildManager().hasGuild(Bukkit.getPlayerExact(inviteRedisData.getTargetPlayerName()))){
+                    if(TridentGuild.getGuildManager().hasGuild(inviteRedisData.getTargetPlayerName())){
                         sendMessage(inviteRedisData.getTargetPlayerName(),inviteRedisData.getSendingPlayer(), InviteRedisData.InviteDataType.ERROR_HAS_GUILD);
                         break;
                     }
@@ -87,5 +98,9 @@ public class InviteHandler {
                     break;
             }
         }));
+    }
+
+    public void close(){
+        agent7.close();
     }
 }

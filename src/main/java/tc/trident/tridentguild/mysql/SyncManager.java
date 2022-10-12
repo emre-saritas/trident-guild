@@ -1,5 +1,6 @@
 package tc.trident.tridentguild.mysql;
 
+import me.lucko.helper.messaging.ChannelAgent;
 import me.lucko.helper.redis.Redis;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 public class SyncManager {
 
+    private ChannelAgent<JSONObject> agent7;
 
     public SyncManager(){
         setupChannelListener();
@@ -23,15 +25,10 @@ public class SyncManager {
 
 
     public void setupChannelListener(){
-        if(TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).newAgent().hasListeners()){
-            TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).newAgent().getListeners().forEach(testChannelListener -> {
-                TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).newAgent().removeListener(testChannelListener);
-            });
-        }
+        agent7 = TridentSync.getInstance().getRedis().getChannel("sGuild", JSONObject.class).newAgent();
 
-        TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).newAgent().addListener(((channelAgent, guildJSON) -> {
-            Utils.debug("[TridentGuild] Redis data received - "+guildJSON.getTest());
-            /*try{
+        agent7.addListener(((channelAgent, guildJSON) -> {
+            try{
                 Utils.debug("[TridentGuild] Redis data received - "+guildJSON.get("syncType"));
 
                 if(SyncType.valueOf(guildJSON.get("syncType").toString()) == SyncType.UPDATE){
@@ -50,7 +47,7 @@ public class SyncManager {
                 }
             }catch (Exception e){
                 throw new RuntimeException(e.getMessage());
-            }*/
+            }
         }));
 
 
@@ -110,16 +107,10 @@ public class SyncManager {
                 json.put("members."+i+".donated",guild.memberList.get(i).getTotalDonate());
             }
         }
-        TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).sendMessage(new test("test31"));
+        TridentSync.getInstance().getRedis().getChannel("sGuild", JSONObject.class).sendMessage(json);
     }
 
-    public static class test{
-        String test;
-        test(String test){
-            this.test=test;
-        }
-        public String getTest() {
-            return test;
-        }
+    public void close(){
+        agent7.close();
     }
 }
