@@ -8,19 +8,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
-import tc.trident.tridentguild.cmds.GuildCmds;
 import tc.trident.tridentguild.mysql.MySQL;
 import tc.trident.tridentguild.mysql.MySQLHandler;
-import tc.trident.tridentguild.mysql.MySQLManager;
-import tc.trident.tridentguild.mysql.SyncManager;
 import tc.trident.tridentguild.utils.Yaml;
 
 public class TridentGuild extends JavaPlugin {
     public static Yaml config,messages,menus,upgrades;
-    private static MySQLManager sqlManager;
+    private static MySQLHandler sqlHandler;
     private static MySQL sql;
     private static TridentGuild instance;
-    private static SyncManager syncManager;
     private static Economy econ;
     private static GuildManager guildManager;
 
@@ -33,12 +29,11 @@ public class TridentGuild extends JavaPlugin {
 
         try{
             sql = new MySQL(this);
-            sqlManager = new MySQLManager(this);
-            syncManager = new SyncManager();
+            sqlHandler = new MySQLHandler(getSql(),this);
+
             guildManager = new GuildManager();
             this.getCommand("tridentguild").setExecutor((CommandExecutor) new AdminCmds());
             this.getCommand("lmsg").setExecutor((CommandExecutor) new GuildChatMessage());
-            this.getCommand("lonca").setExecutor((CommandExecutor) new GuildCmds());
             if (!setupEconomy()) {
                 getServer().getPluginManager().disablePlugin(this);
             }
@@ -63,18 +58,11 @@ public class TridentGuild extends JavaPlugin {
     public static MySQL getSql() {
         return sql;
     }
-
-
     public static MySQLHandler getSqlHandler() {
-        return MySQLManager.mysqlHandler;
+        return sqlHandler;
     }
-
-
     public static GuildManager getGuildManager() {
         return guildManager;
-    }
-    public static SyncManager getSyncManager() {
-        return syncManager;
     }
     public static TridentGuild getInstance() {
         return instance;
