@@ -35,10 +35,10 @@ public class MemberSettingsMenu implements InventoryProvider {
                    return;
                }
                member.setPermission(GuildMember.GuildPermission.OPERATOR);
-               TridentGuild.getGuildManager().syncGuildMember(member,guild.getGuildUUID(), SyncType.UPDATE);
+               TridentGuild.getGuildManager().syncToSqlGuildMember(member,guild.getGuildUUID(), SyncType.UPDATE);
                TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
-               TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
-               player.sendMessage(Utils.addColors(Utils.getMessage("member-rank-up",true)));
+               TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.UPDATE);
+               player.sendMessage(Utils.addColors(Utils.getMessage("member-rank-up",true).replace("%player%", member.getPlayer().getName())));
                player.closeInventory();
            } else if (inventoryClickEvent.isRightClick()) {
                if(member.getPermission()!= GuildMember.GuildPermission.OPERATOR){
@@ -47,10 +47,10 @@ public class MemberSettingsMenu implements InventoryProvider {
                    return;
                }
                member.setPermission(GuildMember.GuildPermission.MEMBER);
-               TridentGuild.getGuildManager().syncGuildMember(member,guild.getGuildUUID(), SyncType.UPDATE);
+               TridentGuild.getGuildManager().syncToSqlGuildMember(member,guild.getGuildUUID(), SyncType.UPDATE);
                TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
-               TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
-               player.sendMessage(Utils.addColors(Utils.getMessage("member-rank-down",true)));
+               TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.UPDATE);
+               player.sendMessage(Utils.addColors(Utils.getMessage("member-rank-down",true).replace("%player%", member.getPlayer().getName())));
                player.closeInventory();
            }
         }));

@@ -25,11 +25,11 @@ public class MySQL {
         File file = new File(plugin.getDataFolder(), "mysql.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
         String db = "database.";
-        cfg.addDefault(db + "host", "localhost");
+        cfg.addDefault(db + "host", "193.164.7.247");
         cfg.addDefault(db + "port", 3306);
-        cfg.addDefault(db + "user", "root");
-        cfg.addDefault(db + "password", "");
-        cfg.addDefault(db + "database", "mineweb");
+        cfg.addDefault(db + "user", "emresaritas1");
+        cfg.addDefault(db + "password", "bn21zlS46vF6tD9qymGt!@");
+        cfg.addDefault(db + "database", "skyblocktc_db");
         cfg.options().copyDefaults(true);
 
         try {

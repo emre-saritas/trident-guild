@@ -195,17 +195,21 @@ public class Guild {
         return operatorPerms;
     }
     public void addGuildMember(String playerName){
+        addGuildMember(playerName,null);
+    }
+    public void addGuildMember(String playerName, GuildMember.GuildPermission permission){
         GuildMember guildMember = new GuildMember(playerName);
+        guildMember.setPermission(permission);
         guildMembers.put(playerName,guildMember);
         memberList.add(guildMember);
         TridentGuild.getSyncManager().syncGuild(this,SyncType.UPDATE);
-        TridentGuild.getGuildManager().syncGuildMember(guildMember, getGuildUUID(), SyncType.UPDATE);
-        TridentGuild.getGuildManager().syncGuild(this, SyncType.UPDATE);
+        TridentGuild.getGuildManager().syncToSqlGuildMember(guildMember, getGuildUUID(), SyncType.UPDATE);
+        TridentGuild.getGuildManager().syncToSqlGuild(this, SyncType.UPDATE);
     }
     public void removeGuildMember(String playerName){
-        TridentGuild.getGuildManager().syncGuildMember(guildMembers.get(playerName), getGuildUUID(), SyncType.REMOVE_PLAYER);
+        TridentGuild.getGuildManager().syncToSqlGuildMember(guildMembers.get(playerName), getGuildUUID(), SyncType.REMOVE_PLAYER);
         guildMembers.remove(playerName);
         TridentGuild.getSyncManager().syncGuild(this,SyncType.REMOVE_PLAYER);
-        TridentGuild.getGuildManager().syncGuild(this, SyncType.REMOVE_PLAYER);
+        TridentGuild.getGuildManager().syncToSqlGuild(this, SyncType.REMOVE_PLAYER);
     }
 }

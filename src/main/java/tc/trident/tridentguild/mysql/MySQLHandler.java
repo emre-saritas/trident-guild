@@ -32,7 +32,7 @@ public class MySQLHandler {
         Connection conn = this.sql.getConnection();
 
         try {
-            PreparedStatement st = conn.prepareStatement("REPLACE INTO Survival_Guild SET `uuid` = ? , `name` = ? , `level` = ? , `minerLevel` = ? , `lumberLevel` = ? , `hunterLevel` = ?, farmerLevel = ?, balance = ?, bannerMeta = ?, memberPerms = ?,opPerms = ?");
+            PreparedStatement st = conn.prepareStatement("REPLACE INTO survival_Guild SET `uuid` = ? , `name` = ? , `level` = ? , `minerLevel` = ? , `lumberLevel` = ? , `hunterLevel` = ?, farmerLevel = ?, balance = ?, bannerMeta = ?, memberPerms = ?,opPerms = ?");
             Throwable var12 = null;
 
             try {
@@ -74,7 +74,7 @@ public class MySQLHandler {
         Connection conn = this.sql.getConnection();
 
         try {
-            PreparedStatement st = conn.prepareStatement("REPLACE INTO Survival_GuildMember SET `playerName` = ? , `guildUUID` = ? , `permission` = ? , `totalDonate` = ?");
+            PreparedStatement st = conn.prepareStatement("REPLACE INTO survival_GuildMember SET `playerName` = ? , `guildUUID` = ? , `permission` = ? , `totalDonate` = ?");
             Throwable var12 = null;
 
             try {
@@ -110,7 +110,7 @@ public class MySQLHandler {
         Connection conn = this.sql.getConnection();
 
         try {
-            PreparedStatement st = conn.prepareStatement("DELETE FROM Survival_Guild WHERE `uuid` = ?");
+            PreparedStatement st = conn.prepareStatement("DELETE FROM survival_Guild WHERE uuid=?");
             Throwable var4 = null;
 
             try {
@@ -138,12 +138,43 @@ public class MySQLHandler {
             var16.printStackTrace();
         }
 
+        try {
+            PreparedStatement st = conn.prepareStatement("SELECT playerName FROM survival_GuildMember WHERE guildUUID=?");
+            Throwable var4 = null;
+
+            try {
+                st.setString(1, uuid);
+
+                ResultSet result = st.executeQuery();
+                if(result.next()){
+                    deleteGuildMember(result.getString("playerName"));
+                }
+            } catch (Throwable var14) {
+                var4 = var14;
+                throw var14;
+            } finally {
+                if (st != null) {
+                    if (var4 != null) {
+                        try {
+                            st.close();
+                        } catch (Throwable var13) {
+                            var4.addSuppressed(var13);
+                        }
+                    } else {
+                        st.close();
+                    }
+                }
+
+            }
+        } catch (SQLException var16) {
+            var16.printStackTrace();
+        }
     }
     public void deleteGuildMember(String playerName) {
         Connection conn = this.sql.getConnection();
 
         try {
-            PreparedStatement st = conn.prepareStatement("DELETE FROM Survival_GuildMember WHERE `playerName` = ?");
+            PreparedStatement st = conn.prepareStatement("DELETE FROM survival_GuildMember WHERE playerName=?");
             Throwable var4 = null;
 
             try {
@@ -173,20 +204,25 @@ public class MySQLHandler {
 
     }
 
-    public Guild getGuild(String uuid){
+    public boolean hasGuild(String playerName){
+        UUID uuid = TridentGuild.getSqlHandler().getGuildUUID(playerName);
+        return uuid != null;
+    }
+
+    public Guild getGuild(UUID uuid){
 
         Connection conn = this.sql.getConnection();
         Guild guild = null;
         try {
-            PreparedStatement st = conn.prepareStatement("SELECT * FROM Survival_Guild WHERE `uuid` = ?");
-            st.setString(1, uuid);
-            st.executeUpdate();
+            PreparedStatement st = conn.prepareStatement("SELECT * FROM survival_Guild WHERE uuid=?");
+            st.setString(1, uuid.toString());
+            st.executeQuery();
 
             ResultSet result = st.executeQuery();
             if(result.next()){
-                List<GuildMember> members = new ArrayList<>(getGuildMembers(uuid));
+                List<GuildMember> members = new ArrayList<>(getGuildMembers(uuid.toString()));
                 // member create
-                guild = new Guild(UUID.fromString(uuid),result.getString("name"),
+                guild = new Guild(UUID.fromString(uuid.toString()),result.getString("name"),
                         null,
                         result.getInt("level"),
                         result.getInt("balance"),
@@ -200,17 +236,17 @@ public class MySQLHandler {
             }
         } catch (SQLException var7) {
             var7.printStackTrace();
+            return null;
         }
 
         return guild;
     }
     public UUID getGuildUUID(String playerName){
-        List<GuildMember> members = new ArrayList<>();
         Connection conn = this.sql.getConnection();
         try {
-            PreparedStatement st = conn.prepareStatement("SELECT guildUUID FROM Survival_GuildMember WHERE `playerName` = ?");
+            PreparedStatement st = conn.prepareStatement("SELECT guildUUID FROM survival_GuildMember WHERE playerName=?");
             st.setString(1, playerName);
-            st.executeUpdate();
+            st.executeQuery();
 
             ResultSet result = st.executeQuery();
             if(result.next()){
@@ -226,9 +262,9 @@ public class MySQLHandler {
         List<GuildMember> members = new ArrayList<>();
         Connection conn = this.sql.getConnection();
         try {
-            PreparedStatement st = conn.prepareStatement("SELECT * FROM Survival_GuildMember WHERE `guildUUID` = ?");
+            PreparedStatement st = conn.prepareStatement("SELECT * FROM survival_GuildMember WHERE guildUUID=?");
             st.setString(1, guildUUID);
-            st.executeUpdate();
+            st.executeQuery();
 
             ResultSet result = st.executeQuery();
             if(result.next()){

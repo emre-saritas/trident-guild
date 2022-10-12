@@ -12,8 +12,8 @@ public class PlayerServerListeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
+        if(!TridentGuild.getSqlHandler().hasGuild(e.getPlayer().getName())) return;
         UUID uuid = TridentGuild.getSqlHandler().getGuildUUID(e.getPlayer().getName());
-        if(uuid == null) return;    // has guild check
         // Save player guild uuid
         TridentGuild.getGuildManager().onlinePlayerGuilds.put(e.getPlayer().getName(),uuid);
 
@@ -25,11 +25,10 @@ public class PlayerServerListeners implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e){
-        if(!TridentGuild.getGuildManager().hasGuild(e.getPlayer())) return;
+        if(!TridentGuild.getGuildManager().hasGuild(e.getPlayer().getName())) return;
         UUID uuid = TridentGuild.getGuildManager().onlinePlayerGuilds.get(e.getPlayer().getName());
         TridentGuild.getGuildManager().onlinePlayerGuilds.remove(e.getPlayer().getName());
 
-        // check if guild still has online player then unload it
         if(!TridentGuild.getGuildManager().onlinePlayerGuilds.containsValue(uuid)){
             TridentGuild.getGuildManager().unloadGuild(uuid);
         }

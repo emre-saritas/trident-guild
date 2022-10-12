@@ -8,14 +8,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
+import tc.trident.tridentguild.cmds.GuildCmds;
 import tc.trident.tridentguild.mysql.MySQL;
 import tc.trident.tridentguild.mysql.MySQLHandler;
+import tc.trident.tridentguild.mysql.MySQLManager;
 import tc.trident.tridentguild.mysql.SyncManager;
 import tc.trident.tridentguild.utils.Yaml;
 
 public class TridentGuild extends JavaPlugin {
     public static Yaml config,messages,menus,upgrades;
-    private static MySQLHandler sqlHandler;
+    private static MySQLManager sqlManager;
     private static MySQL sql;
     private static TridentGuild instance;
     private static SyncManager syncManager;
@@ -31,12 +33,12 @@ public class TridentGuild extends JavaPlugin {
 
         try{
             sql = new MySQL(this);
-            sqlHandler = new MySQLHandler(getSql(),this);
-
+            sqlManager = new MySQLManager(this);
             syncManager = new SyncManager();
             guildManager = new GuildManager();
             this.getCommand("tridentguild").setExecutor((CommandExecutor) new AdminCmds());
             this.getCommand("lmsg").setExecutor((CommandExecutor) new GuildChatMessage());
+            this.getCommand("lonca").setExecutor((CommandExecutor) new GuildCmds());
             if (!setupEconomy()) {
                 getServer().getPluginManager().disablePlugin(this);
             }
@@ -61,9 +63,13 @@ public class TridentGuild extends JavaPlugin {
     public static MySQL getSql() {
         return sql;
     }
+
+
     public static MySQLHandler getSqlHandler() {
-        return sqlHandler;
+        return MySQLManager.mysqlHandler;
     }
+
+
     public static GuildManager getGuildManager() {
         return guildManager;
     }

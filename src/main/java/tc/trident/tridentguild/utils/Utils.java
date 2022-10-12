@@ -139,7 +139,7 @@ public class Utils {
     public static void debug(String debugMessage){
         Bukkit.getLogger().info("[DEBUG] "+debugMessage);
         if(TridentGuild.config.getBoolean("debug-mode")){
-            Bukkit.broadcastMessage("[DEBUG] "+debugMessage);
+            Bukkit.getPlayerExact("EmreSaritas").sendMessage("[DEBUG] "+debugMessage);
         }
     }
     public static boolean isDebug(){

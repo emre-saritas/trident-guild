@@ -44,10 +44,11 @@ public class UpgradesMenu implements InventoryProvider {
                     return;
                 }
             }
+            guild.setGuildLevel(guildLevel+1);
             guild.setBalance(guild.getBalance()-TridentGuild.upgrades.getInt("guild.levels."+(guildLevel+1)+".price"));
             TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
-            TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
-            player.sendMessage(Utils.addColors(Utils.getMessage("guild-levelup",true)));
+            TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.UPDATE);
+            player.sendMessage(Utils.addColors(Utils.getMessage("guild-levelup",true).replace("%level%",(guildLevel+1)+"" )));
         }));
         item = new YamlItem("miner",TridentGuild.upgrades);
         item.setName(item.getName().replace("%level%",guild.getMinerLevel()+""));
@@ -108,7 +109,7 @@ public class UpgradesMenu implements InventoryProvider {
                 guild.setFarmerLevel(guild.getFarmerLevel()+1);
         }
         TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
-        TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
+        TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.UPDATE);
         player.sendMessage(Utils.addColors(Utils.getMessage("upgrade-done",true)));
     }
 

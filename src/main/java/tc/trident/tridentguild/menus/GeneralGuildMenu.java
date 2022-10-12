@@ -21,21 +21,22 @@ public class GeneralGuildMenu implements InventoryProvider {
     }
 
     public void init(Player player, InventoryContents contents){
-        YamlItem item = new YamlItem("generalGuildMenu.0", TridentGuild.menus);
+        YamlItem item = new YamlItem("general-guild.0", TridentGuild.menus);
         item.replaceLore("%name%",guild.getGuildName());
         item.replaceLore("%count%",guild.guildMembers.size()+"");
         item.replaceLore("%level%",guild.getGuildLevel()+"");
+        item.replaceLore("%limit%",TridentGuild.upgrades.getInt("guild.levels."+guild.getGuildLevel()+".limit")+"");
         item.replaceLore("%money%", Utils.nf.format(guild.getBalance()));
         contents.set(1,1, ClickableItem.empty(item.complete()));
-        item = new YamlItem("generalGuildMenu.1", TridentGuild.menus);
+        item = new YamlItem("general-guild.1", TridentGuild.menus);
         contents.set(1,3, ClickableItem.of(item.complete(),inventoryClickEvent -> {
             MembersMenu.openMenu(player);
         }));
-        item = new YamlItem("generalGuildMenu.2", TridentGuild.menus);
+        item = new YamlItem("general-guild.2", TridentGuild.menus);
         contents.set(1,5, ClickableItem.of(item.complete(),inventoryClickEvent -> {
             UpgradesMenu.openMenu(player);
         }));
-        item = new YamlItem("generalGuildMenu.3", TridentGuild.menus);
+        item = new YamlItem("general-guild.3", TridentGuild.menus);
         contents.set(1,7, ClickableItem.of(item.complete(),inventoryClickEvent -> {
             SettingsMenu.openMenu(player);
         }));

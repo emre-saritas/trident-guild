@@ -16,7 +16,7 @@ public class GuildChatMessage implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
 
         Player player = (Player) commandSender;
-        if(TridentGuild.getGuildManager().hasGuild(player)){
+        if(TridentGuild.getGuildManager().hasGuild(player.getName())){
             Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
             if(args.length < 1){
                 player.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2SurvivalTC &8» &cLütfen bir mesaj giriniz."));
@@ -26,7 +26,6 @@ public class GuildChatMessage implements CommandExecutor {
             String message = ChatColor.translateAlternateColorCodes('&',"&f[&dLonca&f] &e"+player.getName()+": &f");
             Guild.GuildChatMessage gchat = new Guild.GuildChatMessage(message+text);
             TridentSync.getInstance().getRedis().getChannel("s"+guild.getGuildUUID()+"-chat", Guild.GuildChatMessage.class).sendMessage(gchat);
-
         }else{
             Utils.sendError(player,"you-not-guild-member");
             return true;

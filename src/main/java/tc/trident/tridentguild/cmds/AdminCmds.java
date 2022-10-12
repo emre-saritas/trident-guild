@@ -1,162 +1,40 @@
 package tc.trident.tridentguild.cmds;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tc.trident.tridentguild.Guild;
-import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
-import tc.trident.tridentguild.menus.UpgradesMenu;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
+
+import java.util.UUID;
 
 public class AdminCmds implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        if(sender instanceof Player){
+        if (sender instanceof Player) {
             Player player = ((Player) sender).getPlayer();
-            if(!player.hasPermission("survivaltc.admin")) return true;
-            if(args.length==0){
-                Utils.sendHelpMessages(player);
-            }if(args.length==1){
-                if(args[0].equalsIgnoreCase("upgrade")){
-                    if(!TridentGuild.getGuildManager().hasGuild(player)){
-                        Utils.sendError(player,"you-not-guild-member");
-                        return true;
-                    }
-                    Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
-                    switch (guild.getGuildMember(player.getName()).getPermission()){
-                        case MEMBER:
-                            if(!guild.memberPerms.get("guild.upgrade")){
-                                Utils.sendError(player, "no-perm");
-                                return true;
-                            }
-                        case OPERATOR:
-                            if(!guild.operatorPerms.get("guild.upgrade")){
-                                Utils.sendError(player, "no-perm");
-                                return true;
-                            }
-                    }
-                    UpgradesMenu.openMenu(player);
-                }else if(args[0].equalsIgnoreCase("ayarlar")){
-                    if(!TridentGuild.getGuildManager().hasGuild(player)){
-                        Utils.sendError(player,"you-not-guild-member");
-                        return true;
-                    }
-                    Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
-                    if(guild.getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
-                        Utils.sendError(player,"not-owner");
-                        return true;
-                    }
-                    UpgradesMenu.openMenu(player);
-                }
-            }if(args.length==2){
-                if(args[0].equalsIgnoreCase("oluştur")){
-                    if(TridentGuild.getGuildManager().hasGuild(player)){
-                        Utils.sendError(player,"you-already-guild-member");
-                        return true;
-                    }
-                    if(!TridentGuild.getGuildManager().guildNames.contains(args[1].toLowerCase())){     // Özel karakter filtresi
-                        TridentGuild.getGuildManager().createGuild(player.getName(), Utils.addColors(args[1]));
-                        player.sendMessage(Utils.addColors(Utils.getMessage("guild-created",true)));
-                        return true;
-                    }else{
-                        Utils.sendError(player,"guild-name-unavailable");
-                        return true;
-                    }
-                }else if(args[0].equalsIgnoreCase("sil")){
-                    if(!TridentGuild.getGuildManager().hasGuild(player)){
-                        Utils.sendError(player,"you-not-guild-member");
-                        return true;
-                    }
-                    Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
-                    if(guild.getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
-                        Utils.sendError(player,"not-owner");
-                        return true;
-                    }
-                    // Tekrar onay eklenecek
-                    TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
-                }else if(args[0].equalsIgnoreCase("davet")){
-                    if(!TridentGuild.getGuildManager().hasGuild(player)){
-                        Utils.sendError(player,"you-not-guild-member");
-                        return true;
-                    }
-                    Player targetPlayer = Bukkit.getPlayerExact(args[1]);
-                    if(!Bukkit.getServer().getOnlinePlayers().contains(targetPlayer)){  // Serverlar arası kontrol
-                        Utils.sendError(player, "name-not-found");
-                        return true;
-                    }
-                    if(TridentGuild.getGuildManager().hasGuild(targetPlayer)){
-                        Utils.sendError(player, "invite-already-has-guild");
-                        return true;
-                    }
-                    // Max oyuncu kontrol
-                    Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
-                    switch (guild.getGuildMember(player.getName()).getPermission()){
-                        case MEMBER:
-                            if(!guild.memberPerms.get("guild.invite")){
-                                Utils.sendError(player, "no-perm");
-                                return true;
-                            }
-                            break;
-                        case OPERATOR:
-                            if(!guild.operatorPerms.get("guild.invite")){
-                                Utils.sendError(player, "no-perm");
-                                return true;
-                            }
-                    }
-                    // Davet istek vs vs
-                    TridentGuild.getGuildManager().getPlayerGuild(player.getName()).addGuildMember(targetPlayer.getName());
-                    player.sendMessage(Utils.addColors(Utils.getMessage("invite-sent",true)));
-                }else if(args[0].equalsIgnoreCase("at")){
-                    if(!TridentGuild.getGuildManager().hasGuild(player)){
-                        Utils.sendError(player,"you-not-guild-member");
-                        return true;
-                    }
-                    Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
-                    if(!guild.isGuildMember(args[1])){
+            if (!player.hasPermission("survivaltc.admin")) return true;
+
+            if(args.length == 2){
+                if(args[0].equalsIgnoreCase("remove")){
+                    if(!TridentGuild.getGuildManager().hasGuild(args[1])){
                         Utils.sendError(player,"player-is-not-guild-member");
                         return true;
                     }
-                    switch (guild.getGuildMember(player.getName()).getPermission()){
-                        case MEMBER:
-                            Utils.sendError(player, "no-perm");
-                            return true;
-                        case OPERATOR:
-                            if(!guild.operatorPerms.get("guild.invite")){
-                                Utils.sendError(player, "no-perm");
-                                return true;
-                            }
-                    }
-                    guild.removeGuildMember(args[1]);
-                }else if(args[0].equalsIgnoreCase("bağış")){
-                    if(!TridentGuild.getGuildManager().hasGuild(player)){
-                        Utils.sendError(player,"you-not-guild-member");
-                        return true;
-                    }
-                    Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
-                    int amount;
-                    try{
-                        amount = Integer.parseInt(args[1]);
-                    }catch (NumberFormatException e){
-                        Utils.sendError(player, "number-error");
-                        return true;
-                    }
-                    TridentGuild.getEcon().withdrawPlayer(player, amount);
-                    guild.setBalance(guild.getBalance()+(float)amount);
-                    GuildMember guildMember = guild.getGuildMember(player.getName());
-                    guildMember.setTotalDonate(guildMember.getTotalDonate()+(float)amount);
-                    TridentGuild.getGuildManager().syncGuildMember(guildMember, guild.getGuildUUID(), SyncType.UPDATE);
-                    TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
-                    TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
-                    player.sendMessage(Utils.addColors(Utils.getMessage("donated",true)));
+                    UUID uuid = TridentGuild.getGuildManager().onlinePlayerGuilds.get(args[1]);
+                    Guild guild = TridentGuild.getGuildManager().loadedGuilds.get(uuid);
+                    TridentGuild.getGuildManager().removeGuild(uuid);
+                    TridentGuild.getSyncManager().syncGuild(guild,SyncType.REMOVE_GUILD);
+                    TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.REMOVE_GUILD);
+                    player.sendMessage(Utils.addColors(Utils.getMessage("guild-removed",true)));
                 }
-            }
-        }else{
 
+            }
         }
+
 
         return true;
     }

@@ -38,7 +38,7 @@ public class SettingsMenu implements InventoryProvider {
                 BannerMeta newMeta = (BannerMeta) newBanner.getItemMeta();
                 //guild.setBannerMeta(newMeta);
                 TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
-                TridentGuild.getGuildManager().syncGuild(guild, SyncType.UPDATE);
+                TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.UPDATE);
                 player.sendMessage(Utils.addColors(Utils.getMessage("banner-set",true)));
                 player.closeInventory();
             }else{
@@ -72,6 +72,8 @@ public class SettingsMenu implements InventoryProvider {
                 return;
             }
             TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
+            TridentGuild.getSyncManager().syncGuild(guild,SyncType.REMOVE_GUILD);
+            TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.REMOVE_GUILD);
         }));
     }
 

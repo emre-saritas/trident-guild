@@ -23,19 +23,37 @@ public class SyncManager {
 
 
     public void setupChannelListener(){
-        TridentSync.getInstance().getRedis().getChannel("sGuild", JSONObject.class).newAgent().addListener(((channelAgent, guildJSON) -> {
-            Utils.debug("[TridentGuild] Redis data received - "+guildJSON.get("syncType"));
-            if(SyncType.valueOf(guildJSON.get("syncType").toString()) == SyncType.UPDATE){
-                updateGuild(guildJSON);
-            }else if(SyncType.valueOf(guildJSON.get("syncType").toString()) == SyncType.REMOVE_GUILD){
-                TridentGuild.getGuildManager().removeGuild(UUID.fromString(guildJSON.get("guildUUID").toString()));
-                Utils.debug("[TridentGuild] Guild removed - "+guildJSON.get("guildUUID").toString());
-            }else if(SyncType.valueOf(guildJSON.get("syncType").toString()) == SyncType.REMOVE_PLAYER){
-                TridentGuild.getGuildManager().onlinePlayerGuilds.remove(guildJSON.get("playerName").toString());
-                Utils.debug("[TridentGuild] Guild member kicked - "+guildJSON.get("playerName").toString());
-                updateGuild(guildJSON);
-            }
+        if(TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).newAgent().hasListeners()){
+            TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).newAgent().getListeners().forEach(testChannelListener -> {
+                TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).newAgent().removeListener(testChannelListener);
+            });
+        }
+
+        TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).newAgent().addListener(((channelAgent, guildJSON) -> {
+            Utils.debug("[TridentGuild] Redis data received - "+guildJSON.getTest());
+            /*try{
+                Utils.debug("[TridentGuild] Redis data received - "+guildJSON.get("syncType"));
+
+                if(SyncType.valueOf(guildJSON.get("syncType").toString()) == SyncType.UPDATE){
+                    if(!TridentGuild.getGuildManager().loadedGuilds.containsKey(UUID.fromString(guildJSON.get("guildUUID").toString()))) return;
+
+                    updateGuild(guildJSON);
+                }else if(SyncType.valueOf(guildJSON.get("syncType").toString()) == SyncType.REMOVE_GUILD){
+                    if(!TridentGuild.getGuildManager().loadedGuilds.containsKey(UUID.fromString(guildJSON.get("guildUUID").toString()))) return;
+                    TridentGuild.getGuildManager().removeGuild(UUID.fromString(guildJSON.get("guildUUID").toString()));
+                    Utils.debug("[TridentGuild] Guild removed - "+guildJSON.get("guildUUID").toString());
+
+                }else if(SyncType.valueOf(guildJSON.get("syncType").toString()) == SyncType.REMOVE_PLAYER){
+                    TridentGuild.getGuildManager().onlinePlayerGuilds.remove(guildJSON.get("playerName").toString());
+                    Utils.debug("[TridentGuild] Guild member kicked - "+guildJSON.get("playerName").toString());
+                    updateGuild(guildJSON);
+                }
+            }catch (Exception e){
+                throw new RuntimeException(e.getMessage());
+            }*/
         }));
+
+
     }
 
     public void updateGuild(JSONObject guildJSON){
@@ -53,7 +71,7 @@ public class SyncManager {
                 guildJSON.get("name").toString(),
                 null,
                 Integer.parseInt(guildJSON.get("level").toString()),
-                Integer.parseInt(guildJSON.get("balance").toString()),
+                Float.parseFloat(guildJSON.get("balance").toString()),
                 Integer.parseInt(guildJSON.get("minerLevel").toString()),
                 Integer.parseInt(guildJSON.get("lumberLevel").toString()),
                 Integer.parseInt(guildJSON.get("hunterLevel").toString()),
@@ -92,6 +110,16 @@ public class SyncManager {
                 json.put("members."+i+".donated",guild.memberList.get(i).getTotalDonate());
             }
         }
-        TridentSync.getInstance().getRedis().getChannel("sGuild", JSONObject.class).sendMessage(json);
+        TridentSync.getInstance().getRedis().getChannel("sGuild", test.class).sendMessage(new test("test31"));
+    }
+
+    public static class test{
+        String test;
+        test(String test){
+            this.test=test;
+        }
+        public String getTest() {
+            return test;
+        }
     }
 }

@@ -25,13 +25,13 @@ general-guild:
     head-value: ""
     lore:
       - ""
-  4:
+  3:
     name: "&eAyarlar"
     type: PLAYER_HEAD
     head-value: ""
     lore:
       - ""
-  5:
+  4:
     name: "&eFlama"
     type: WHITE_BANNER
     lore:

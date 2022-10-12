@@ -12,5 +12,8 @@ commands:
   lonca:
     description: lonca
     usage: /lonca
+  lmsg:
+    description: lmsg
+    usage: /lmsg
 
-depend: [TridentSync]
+depend: [TridentSync, helper, helper-redis]
