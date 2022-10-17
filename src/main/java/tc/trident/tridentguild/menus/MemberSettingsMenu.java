@@ -28,6 +28,10 @@ public class MemberSettingsMenu implements InventoryProvider {
         bilgi.replaceLore("%donated%",Utils.nf.format(member.getTotalDonate()));
         contents.set(1,2,ClickableItem.empty(bilgi.complete()));
         contents.set(1,4,ClickableItem.of(new YamlItem("member-settings.1").complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
            if(inventoryClickEvent.isLeftClick()){
                if(member.getPermission()!= GuildMember.GuildPermission.MEMBER){
                    Utils.sendError(player,"cant-do");
@@ -55,6 +59,10 @@ public class MemberSettingsMenu implements InventoryProvider {
            }
         }));
         contents.set(1,6,ClickableItem.of(new YamlItem("member-settings.1").complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             if(member.getPermission() == GuildMember.GuildPermission.OWNER){
                 Utils.sendError(player,"no-perm");
                 player.closeInventory();

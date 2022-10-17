@@ -30,14 +30,26 @@ public class GeneralGuildMenu implements InventoryProvider {
         contents.set(1,1, ClickableItem.empty(item.complete()));
         item = new YamlItem("general-guild.1", TridentGuild.menus);
         contents.set(1,3, ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             MembersMenu.openMenu(player);
         }));
         item = new YamlItem("general-guild.2", TridentGuild.menus);
         contents.set(1,5, ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             UpgradesMenu.openMenu(player);
         }));
         item = new YamlItem("general-guild.3", TridentGuild.menus);
         contents.set(1,7, ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             SettingsMenu.openMenu(player);
         }));
     }

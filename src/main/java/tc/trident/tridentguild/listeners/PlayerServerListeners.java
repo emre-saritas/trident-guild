@@ -5,6 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.utils.Utils;
 
 import java.util.UUID;
 
@@ -12,9 +13,11 @@ public class PlayerServerListeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
-        if(!TridentGuild.getSqlHandler().hasGuild(e.getPlayer().getName())) return;
+        if(!TridentGuild.getSqlHandler().hasGuild(e.getPlayer().getName())){
+            return;
+        }
         UUID uuid = TridentGuild.getSqlHandler().getGuildUUID(e.getPlayer().getName());
-        // Save player guild uuid
+
         TridentGuild.getGuildManager().onlinePlayerGuilds.put(e.getPlayer().getName(),uuid);
 
         // check if guild loaded, if not load it

@@ -85,7 +85,7 @@ public class Guild {
     }
 
     public int getMaxPlayers(){
-        return TridentGuild.config.getInt("guild.levels."+guildLevel+".limit");
+        return TridentGuild.upgrades.getInt("guild.levels."+guildLevel+".limit");
     }
     public boolean isGuildFull(){
         return getMaxPlayers() <= getGuildSize();
@@ -202,22 +202,20 @@ public class Guild {
     public HashMap<String, Boolean> getOperatorPerms() {
         return operatorPerms;
     }
-    public void addGuildMember(String playerName){
-        addGuildMember(playerName,null);
-    }
     public void addGuildMember(String playerName, GuildMember.GuildPermission permission){
-        GuildMember guildMember = new GuildMember(playerName);
-        guildMember.setPermission(permission);
+        if(TridentGuild.getGuildManager().hasGuild(playerName)) return;
+        TridentGuild.getGuildManager().onlinePlayerGuilds.put(playerName, guildUUID);
+        GuildMember guildMember = new GuildMember(playerName, permission);
         guildMembers.put(playerName,guildMember);
         memberList.add(guildMember);
         TridentGuild.getSyncManager().syncGuild(this,SyncType.UPDATE);
         TridentGuild.getGuildManager().syncToSqlGuildMember(guildMember, getGuildUUID(), SyncType.UPDATE);
-        TridentGuild.getGuildManager().syncToSqlGuild(this, SyncType.UPDATE);
     }
     public void removeGuildMember(String playerName){
+        TridentGuild.getGuildManager().onlinePlayerGuilds.remove(playerName);
         TridentGuild.getGuildManager().syncToSqlGuildMember(guildMembers.get(playerName), getGuildUUID(), SyncType.REMOVE_PLAYER);
+        memberList.remove(guildMembers.get(playerName));
         guildMembers.remove(playerName);
-        TridentGuild.getSyncManager().syncGuild(this,SyncType.REMOVE_PLAYER);
-        TridentGuild.getGuildManager().syncToSqlGuild(this, SyncType.REMOVE_PLAYER);
+        TridentGuild.getSyncManager().syncGuild(this,SyncType.REMOVE_PLAYER, playerName);
     }
 }

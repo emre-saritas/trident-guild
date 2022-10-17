@@ -32,6 +32,10 @@ public class UpgradesMenu implements InventoryProvider {
         item.replaceLore("%price%",Utils.nf.format(TridentGuild.upgrades.getInt("guild.levels."+(guildLevel+1)+".price"))+"$");
         item.replaceLore("%next-limit%",TridentGuild.upgrades.getInt("guild.levels."+(guildLevel+1)+".limit")+"");
         contents.set(0,4,ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             if(guild.getBalance() < TridentGuild.upgrades.getInt("guild.levels."+(guildLevel+1)+".price")){
                 Utils.sendError(player,"upgrade-balance-error");
                 player.closeInventory();
@@ -76,6 +80,10 @@ public class UpgradesMenu implements InventoryProvider {
     }
 
     public void clickEvent(InventoryClickEvent e, String upgradeID){
+        if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+            Utils.sendError(player, "you-not-guild-member");
+            return;
+        }
         int upgradeLvl = 0;
         switch (upgradeID){
             case "miner":

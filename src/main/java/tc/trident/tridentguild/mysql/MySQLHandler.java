@@ -146,7 +146,7 @@ public class MySQLHandler {
                 st.setString(1, uuid);
 
                 ResultSet result = st.executeQuery();
-                if(result.next()){
+                while(result.next()){
                     deleteGuildMember(result.getString("playerName"));
                 }
             } catch (Throwable var14) {
@@ -264,10 +264,8 @@ public class MySQLHandler {
         try {
             PreparedStatement st = conn.prepareStatement("SELECT * FROM survival_GuildMember WHERE guildUUID=?");
             st.setString(1, guildUUID);
-            st.executeQuery();
-
             ResultSet result = st.executeQuery();
-            if(result.next()){
+            while(result.next()){
                 members.add(new GuildMember(result.getString("playerName"),
                         GuildMember.GuildPermission.valueOf(result.getString("permission")),
                         result.getInt("totalDonate")));

@@ -2,6 +2,9 @@ package tc.trident.tridentguild;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemStack;
+import tc.trident.tridentguild.utils.Utils;
+import tc.trident.tridentguild.utils.YamlItem;
 
 public class GuildMember {
 
@@ -14,6 +17,10 @@ public class GuildMember {
         this.player = Bukkit.getOfflinePlayer(playerName);
         this.permission = GuildPermission.MEMBER;
     }
+    public GuildMember(String playerName, GuildPermission perm){
+        this.player = Bukkit.getOfflinePlayer(playerName);
+        this.permission = perm;
+    }
     public GuildMember(String playerName, GuildPermission perm, int totalDonate){
         this.player = Bukkit.getOfflinePlayer(playerName);
         this.permission = perm;
@@ -22,6 +29,13 @@ public class GuildMember {
 
 
 
+    public ItemStack getMemberShowItem(){
+        YamlItem item = new YamlItem("members.member",TridentGuild.menus);
+        item.setName(item.getName().replace("%name%",player.getName()));
+        item.replaceLore("%perm%", permission.name);
+        item.replaceLore("%donated%", Utils.nf.format(totalDonate));
+        return item.complete();
+    }
     public void makeOwner(){
         this.permission=GuildPermission.OWNER;
     }

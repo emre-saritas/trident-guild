@@ -10,18 +10,23 @@ public class Invite {
     private final String playerName;
     private final UUID guildUUID;
     private final long inviteDate;
+    private String guildName;
 
     public Invite(String playerName, UUID guildUUID, long inviteDate) {
         this.playerName = playerName;
         this.guildUUID = guildUUID;
         this.inviteDate = inviteDate;
+        this.guildName = TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
     }
 
     public boolean isExpired(){
-        return (System.currentTimeMillis()-inviteDate) < TridentGuild.config.getInt("invite-time")* 1000L;
+        return (inviteDate+TridentGuild.config.getInt("invite-time")*1000L) - System.currentTimeMillis() <= 0;
     }
     public int getSecondsLeft(){
         return (int) (((System.currentTimeMillis()+(TridentGuild.config.getInt("invite-time")*1000L))-inviteDate)/1000L);
+    }
+    public String getGuildName() {
+        return guildName;
     }
     public String getPlayerName() {
         return playerName;

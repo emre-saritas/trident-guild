@@ -27,7 +27,7 @@ public class InviteRedisData {
         return sendingPlayer;
     }
 
-    enum InviteDataType {
+    public enum InviteDataType {
         INVITE,
         ERROR_HAS_GUILD,
         ERROR_HAS_INVITE,

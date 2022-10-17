@@ -9,6 +9,8 @@ import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.invite.Invite;
+import tc.trident.tridentguild.invite.InviteRedisData;
 import tc.trident.tridentguild.menus.GeneralGuildMenu;
 import tc.trident.tridentguild.menus.UpgradesMenu;
 import tc.trident.tridentguild.mysql.SyncType;
@@ -23,7 +25,10 @@ public class GuildCmds implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (sender instanceof Player) {
             Player player = ((Player) sender).getPlayer();
-            if (!player.hasPermission("survivaltc.admin")) return true;
+            if (!player.hasPermission("survivaltc.beta")){
+                Utils.sendError(player,"soon");
+                return true;
+            }
 
             if (args.length == 0) {
                 if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
@@ -52,7 +57,33 @@ public class GuildCmds implements CommandExecutor {
                             }
                     }
                     UpgradesMenu.openMenu(player);
-                } else if (args[0].equalsIgnoreCase("ayarlar")) {
+                } else if (args[0].equalsIgnoreCase("kabul")) {
+                    if (TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                        Utils.sendError(player, "you-already-guild-member");
+                        return true;
+                    }
+                    if(!TridentGuild.getInviteHandler().playerInvites.containsKey(player.getName())){
+                        Utils.sendError(player,"invite-none");
+                        return true;
+                    }
+
+                    Invite invite = TridentGuild.getInviteHandler().getInvite(player.getName());
+
+                    if(!TridentGuild.getGuildManager().loadedGuilds.containsKey(invite.getGuildUUID())){
+                        TridentGuild.getGuildManager().loadGuild(invite.getGuildUUID());
+                    }
+                    TridentGuild.getGuildManager().loadedGuilds.get(invite.getGuildUUID()).addGuildMember(player.getName(), GuildMember.GuildPermission.MEMBER);
+                    TridentGuild.getInviteHandler().playerInvites.remove(player.getName());
+                    TridentGuild.getInviteHandler().sendMessage(player.getName(), invite.getGuildUUID().toString(), InviteRedisData.InviteDataType.JOINED_GUILD);
+
+                }else if (args[0].equalsIgnoreCase("red")) {
+                    if(TridentGuild.getInviteHandler().playerInvites.containsKey(player.getName())){
+                        Utils.sendError(player,"invite-none");
+                        return true;
+                    }
+                    TridentGuild.getInviteHandler().playerInvites.remove(player.getName());
+                    player.sendMessage(Utils.addColors(Utils.getMessage("invite-rejected",true)));
+                }else if (args[0].equalsIgnoreCase("ayarlar")) {
                     if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
                         Utils.sendError(player, "you-not-guild-member");
                         return true;

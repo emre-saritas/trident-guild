@@ -1,42 +1,53 @@
 package tc.trident.tridentguild;
 
+import me.lucko.helper.plugin.ExtendedJavaPlugin;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import tc.trident.sync.TridentSync;
+import tc.trident.sync.sync.SyncBlockListeners;
+import tc.trident.sync.sync.SyncListeners;
 import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
 import tc.trident.tridentguild.cmds.GuildCmds;
 import tc.trident.tridentguild.invite.InviteHandler;
+import tc.trident.tridentguild.listeners.PlayerServerListeners;
+import tc.trident.tridentguild.listeners.RedisListeners;
 import tc.trident.tridentguild.mysql.MySQL;
 import tc.trident.tridentguild.mysql.MySQLHandler;
 import tc.trident.tridentguild.mysql.MySQLManager;
 import tc.trident.tridentguild.mysql.SyncManager;
 import tc.trident.tridentguild.utils.Yaml;
 
-public class TridentGuild extends JavaPlugin {
-    public static Yaml config,messages,menus,upgrades;
+public class TridentGuild extends ExtendedJavaPlugin {
+    public static Yaml config,messages,menus,upgrades,redis;
     private static TridentGuild instance;
     private static MySQLManager sqlManager;
     private static Economy econ;
     private static GuildManager guildManager;
     private static SyncManager syncManager;
     private static InviteHandler inviteHandler;
+    private RedisListeners redisListeners;
 
-    public void onEnable() {
+    @Override
+    public void enable() {
         instance = this;
         config = new Yaml(getDataFolder() + "/config.yml", "config.yml");
         messages = new Yaml(getDataFolder() + "/messages.yml", "messages.yml");
         menus = new Yaml(getDataFolder() + "/menus.yml", "menus.yml");
         upgrades = new Yaml(getDataFolder() + "/upgrades.yml", "upgrades.yml");
+        redis = new Yaml(getDataFolder() + "/redis.yml", "redis.yml");
 
         try{
             syncManager = new SyncManager();
             sqlManager = new MySQLManager(this);
             guildManager = new GuildManager();
             inviteHandler = new InviteHandler();
+            Bukkit.getPluginManager().registerEvents(new PlayerServerListeners(),this);
+            redisListeners = new RedisListeners();
+            Bukkit.getPluginManager().registerEvents(redisListeners,this);
             this.getCommand("tridentguild").setExecutor((CommandExecutor) new AdminCmds());
             this.getCommand("lonca").setExecutor((CommandExecutor) new GuildCmds());
             this.getCommand("lmsg").setExecutor((CommandExecutor) new GuildChatMessage());
@@ -49,9 +60,10 @@ public class TridentGuild extends JavaPlugin {
 
     }
 
-    public void onDisable() {
-        inviteHandler.close();
-        syncManager.close();
+    @Override
+    protected void disable() {
+        if(redisListeners != null)
+            redisListeners.close();
     }
 
     private boolean setupEconomy() {

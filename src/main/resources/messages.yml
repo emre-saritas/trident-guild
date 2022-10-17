@@ -1,9 +1,14 @@
 
 invite-sent: "&e%player%&7 adlÄ± oyuncuya lonca daveti yollandÄ±."
 invite-already-has-guild: "&cOyuncunun zaten bir loncasÄ± var!"
+invite-already-has-invite: "&cOyuncunun zaten bekleyen bir lonca daveti var."
+invite-expired: "&cLonca davetinin süresi doldu."
+invite-none: "&cHerhangi bir lonca davetiniz bulunmamakta."
+invite-rejected: "&7Davet reddedildi."
+player-joined-guild: "&e%player%&7 adlı oyuncu loncanıza katıldı!"
 name-not-found: "&cBelirtilen oyuncu bulunamadÄ±. LÃ¼tfen ismi doÄŸru girdiÄŸinizden emin olun."
 invite-received: "&e%player%&7 sizi &e%guild%&7 adlÄ± loncaya davet etti! &e/lonca kabul/red"
-you-already-guild-member: "&cZaten bir lonca Ã¼yesisiniz."
+you-already-guild-member: "&cZaten bir lonca üyesisiniz."
 not-owner: "&cBunu sadece lonca lideri yapabilir."
 guild-created: "&7LoncanÄ±z oluÅŸturuldu! &e/lonca"
 guild-name-already-error: "&cBu lonca adÄ± halihazÄ±rda kullanÄ±lÄ±yor."
@@ -27,6 +32,7 @@ no-perm: "&cLonca yetkiniz yetersiz."
 cant-do: "&cBunu yapamazsÄ±nÄ±z."
 banner-set: "&7Yeni lonca flamasÄ± ayarlandÄ±."
 banner-error: "&7Elinde geÃ§erli bir flama yok."
+soon: "&cÇok yakında!"
 
 help:
   - "&e/lonca - Genel lonca menÃ¼sÃ¼nÃ¼ aÃ§ar"

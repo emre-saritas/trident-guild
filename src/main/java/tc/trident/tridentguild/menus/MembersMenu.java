@@ -25,12 +25,23 @@ public class MembersMenu implements InventoryProvider {
 
     public void init(Player player, InventoryContents contents){
         for(int i = page*45; i<guild.guildMembers.size(); i++){
-            YamlItem item = new YamlItem("members.member",TridentGuild.menus);
             GuildMember guildMember = guild.memberList.get(i);
-            item.setName(item.getName().replace("%name%",guildMember.getPlayer().getName()));
-            item.replaceLore("%perm%",guildMember.getPermission().getName());
-            item.replaceLore("%donated%",Utils.nf.format(guildMember.getTotalDonate()));
-            contents.set(row,col,ClickableItem.empty(item.complete()));
+            contents.set(row,col,ClickableItem.of(guildMember.getMemberShowItem(),inventoryClickEvent -> {
+                if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                    Utils.sendError(player, "you-not-guild-member");
+                    return;
+                }
+                if(guild.getGuildMember(player.getName()).getPermission() == GuildMember.GuildPermission.MEMBER){
+                    Utils.sendError(player,"no-perm");
+                    player.closeInventory();
+                }
+                MemberSettingsMenu.openMenu(player,guildMember.getPlayer().getName());
+            }));
+            col++;
+            if(col%9 == 0){
+                col = 0;
+                row++;
+            }
         }
     }
 

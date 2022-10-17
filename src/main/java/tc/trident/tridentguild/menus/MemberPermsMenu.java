@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
 
 public class MemberPermsMenu implements InventoryProvider {
@@ -30,6 +31,10 @@ public class MemberPermsMenu implements InventoryProvider {
 
     public void init(Player player, InventoryContents contents) {
         contents.set(0,0, ClickableItem.of(getItem("invite"), inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             onClick(player,"invite");
         }));
     }

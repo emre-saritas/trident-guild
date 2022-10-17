@@ -13,14 +13,11 @@ import java.util.UUID;
 
 public class InviteHandler {
 
-    private HashMap<String, Invite> playerInvites = new HashMap<>();
-    private HashMap<String, Long> playerGuildDeletes = new HashMap<>();
+    public HashMap<String, Invite> playerInvites = new HashMap<>();
+    public HashMap<String, Long> playerGuildDeletes = new HashMap<>();
     private BukkitTask inviteController;
 
-    private ChannelAgent<InviteRedisData> agent7;
-
     public InviteHandler(){
-        setupInviteListener();
         inviteController = inviteControllerRun.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,10);
     }
 
@@ -31,13 +28,17 @@ public class InviteHandler {
             if(playerInvites.size() != 0){
                 for(Invite invite : playerInvites.values()){
                     if(invite.isExpired()){
+                        if(Bukkit.getOfflinePlayer(invite.getPlayerName()).isOnline())
+                            Bukkit.getPlayerExact(invite.getPlayerName()).sendMessage(Utils.addColors(Utils.getMessage("invite-expired",true)));
                         playerInvites.remove(invite.getPlayerName());
                     }
                 }
             }
         }
     };
-
+    public Invite getInvite(String playerName){
+        return playerInvites.get(playerName);
+    }
     public void removeGuildDeleteCooldown(String playerName){
         if(playerGuildDeletes.containsKey(playerName))
             playerGuildDeletes.remove(playerName);
@@ -50,7 +51,6 @@ public class InviteHandler {
     }
     public boolean isGuildDeleteCooldownExpired(String playerName){
         if(!playerGuildDeletes.containsKey(playerName)) return true;
-        Bukkit.getPlayerExact("EmreSaritas").sendMessage(System.currentTimeMillis() + " " +playerGuildDeletes.get(playerName)+5000L);
         return System.currentTimeMillis() >= playerGuildDeletes.get(playerName)+5000L;
     }
     public void sendInvite(String sendingPlayer, String targetPlayer){
@@ -63,44 +63,5 @@ public class InviteHandler {
     }
     public void sendMessage(String sendingPlayer, String targetPlayer, InviteRedisData.InviteDataType dataType, Invite invite){
         TridentSync.getInstance().getRedis().getChannel("sGuildInvite",InviteRedisData.class).sendMessage(new InviteRedisData(sendingPlayer,targetPlayer,invite,dataType));
-    }
-    public void setupInviteListener(){
-        agent7 = TridentSync.getInstance().getRedis().getChannel("sGuildInvite",InviteRedisData.class).newAgent();
-
-        agent7.addListener(((channelAgent, inviteRedisData) -> {
-            if(!Bukkit.getServer().getOnlinePlayers().contains(Bukkit.getPlayerExact(inviteRedisData.getTargetPlayerName()))) return;
-            switch (inviteRedisData.getDataType()){
-                case INVITE:
-                    if(playerInvites.containsKey(inviteRedisData.getTargetPlayerName())){
-                        sendMessage(inviteRedisData.getTargetPlayerName(),inviteRedisData.getSendingPlayer(), InviteRedisData.InviteDataType.ERROR_HAS_INVITE);
-                        break;
-                    }
-                    if(TridentGuild.getGuildManager().hasGuild(inviteRedisData.getTargetPlayerName())){
-                        sendMessage(inviteRedisData.getTargetPlayerName(),inviteRedisData.getSendingPlayer(), InviteRedisData.InviteDataType.ERROR_HAS_GUILD);
-                        break;
-                    }
-                    playerInvites.put(inviteRedisData.getTargetPlayerName(),inviteRedisData.getInvite());
-                    Bukkit.getPlayerExact(inviteRedisData.getTargetPlayerName()).sendMessage(Utils.addColors(Utils.getMessage("invite-received",true)));
-                    break;
-                case JOINED_GUILD:
-                    if(!TridentGuild.getGuildManager().loadedGuilds.containsKey(inviteRedisData.getInvite().getGuildUUID())) break;
-                    TridentGuild.getGuildManager().loadedGuilds.get(inviteRedisData.getInvite().getGuildUUID()).memberList.forEach(member -> {
-                        if(member.getPlayer().isOnline()){
-                            member.getPlayer().getPlayer().sendMessage(Utils.addColors(Utils.getMessage("player-joined-guild",true).replace("%player%",inviteRedisData.getSendingPlayer())));
-                        }
-                    });
-                    break;
-                case ERROR_HAS_GUILD:
-                    Utils.sendError(Bukkit.getPlayerExact(inviteRedisData.getTargetPlayerName()),"invite-already-has-guild");
-                    break;
-                case ERROR_HAS_INVITE:
-                    Utils.sendError(Bukkit.getPlayerExact(inviteRedisData.getTargetPlayerName()),"invite-already-has");
-                    break;
-            }
-        }));
-    }
-
-    public void close(){
-        agent7.close();
     }
 }

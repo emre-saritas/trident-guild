@@ -33,6 +33,10 @@ public class SettingsMenu implements InventoryProvider {
         meta.setDisplayName(item.getName());
         banner.setItemMeta(meta);
         contents.set(1,1, ClickableItem.of(banner,inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             ItemStack newBanner = player.getInventory().getItemInMainHand();
             if(newBanner.getType().toString().contains("BANNER") && !newBanner.getType().toString().contains("BANNER_PATTERN")){
                 BannerMeta newMeta = (BannerMeta) newBanner.getItemMeta();
@@ -48,6 +52,10 @@ public class SettingsMenu implements InventoryProvider {
         }));
         item = new YamlItem("settings.1",TridentGuild.menus);
         contents.set(1,3,ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             if(guild.getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
                 Utils.sendError(player,"not-owner");
                 player.closeInventory();
@@ -57,6 +65,10 @@ public class SettingsMenu implements InventoryProvider {
         }));
         item = new YamlItem("settings.2",TridentGuild.menus);
         contents.set(1,3,ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             if(guild.getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
                 Utils.sendError(player,"not-owner");
                 player.closeInventory();
@@ -66,6 +78,10 @@ public class SettingsMenu implements InventoryProvider {
         }));
         item = new YamlItem("settings.3",TridentGuild.menus);
         contents.set(1,3,ClickableItem.of(item.complete(),inventoryClickEvent -> {
+            if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
             if(guild.getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
                 Utils.sendError(player,"not-owner");
                 player.closeInventory();

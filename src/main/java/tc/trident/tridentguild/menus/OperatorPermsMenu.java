@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
 
 public class OperatorPermsMenu implements InventoryProvider {
@@ -51,6 +52,10 @@ public class OperatorPermsMenu implements InventoryProvider {
     }
 
     public void onClick(Player player,String id){
+        if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+            Utils.sendError(player, "you-not-guild-member");
+            return;
+        }
         if(guild.getGuildMember(playerName).getPermission() == GuildMember.GuildPermission.OWNER){
             if(guild.operatorPerms.get("guild."+id)){
                 guild.operatorPerms.replace("guild."+id,false);
