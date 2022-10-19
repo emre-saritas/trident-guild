@@ -64,6 +64,7 @@ public class TridentGuild extends ExtendedJavaPlugin {
     protected void disable() {
         if(redisListeners != null)
             redisListeners.close();
+        guildManager.unloadAllGuilds();
     }
 
     private boolean setupEconomy() {

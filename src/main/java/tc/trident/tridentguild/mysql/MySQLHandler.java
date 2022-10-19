@@ -231,8 +231,8 @@ public class MySQLHandler {
                         result.getInt("hunterLevel"),
                         result.getInt("farmerLevel"),
                         members,
-                        Guild.deserializeMemberPerms("memberPerms"),
-                        Guild.deserializeMemberPerms("opPerms"));
+                        Guild.deserializeMemberPerms(result.getString("memberPerms")),
+                        Guild.deserializeOpPerms(result.getString("opPerms")));
             }
         } catch (SQLException var7) {
             var7.printStackTrace();

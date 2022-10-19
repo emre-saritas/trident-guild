@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
 
@@ -52,6 +53,7 @@ public class MemberPermsMenu implements InventoryProvider {
                 guild.memberPerms.replace("guild."+id,true);
             }
         }
+        TridentGuild.getSyncManager().syncGuild(guild, SyncType.UPDATE);
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK,1,1);
         OperatorPermsMenu.openMenu(player);
     }

@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.cmds.GuildCmds;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
@@ -64,7 +65,7 @@ public class SettingsMenu implements InventoryProvider {
             OperatorPermsMenu.openMenu(player);
         }));
         item = new YamlItem("settings.2",TridentGuild.menus);
-        contents.set(1,3,ClickableItem.of(item.complete(),inventoryClickEvent -> {
+        contents.set(1,5,ClickableItem.of(item.complete(),inventoryClickEvent -> {
             if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
                 Utils.sendError(player, "you-not-guild-member");
                 return;
@@ -77,7 +78,7 @@ public class SettingsMenu implements InventoryProvider {
             MemberPermsMenu.openMenu(player);
         }));
         item = new YamlItem("settings.3",TridentGuild.menus);
-        contents.set(1,3,ClickableItem.of(item.complete(),inventoryClickEvent -> {
+        contents.set(1,7,ClickableItem.of(item.complete(),inventoryClickEvent -> {
             if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
                 Utils.sendError(player, "you-not-guild-member");
                 return;
@@ -87,9 +88,8 @@ public class SettingsMenu implements InventoryProvider {
                 player.closeInventory();
                 return;
             }
-            TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
-            TridentGuild.getSyncManager().syncGuild(guild,SyncType.REMOVE_GUILD);
-            TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.REMOVE_GUILD);
+            GuildCmds.deleteGuild(player,guild);
+            player.closeInventory();
         }));
     }
 

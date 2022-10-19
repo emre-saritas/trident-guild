@@ -35,8 +35,8 @@ public class GuildManager {
                     guild.getFarmerLevel(),
                     guild.getBalance(),
                     null,
-                    Guild.serializePerms(guild.getMemberPerms()),
-                    Guild.serializePerms(guild.getOperatorPerms()));
+                    Guild.serializeMemberPerms(guild.getMemberPerms()),
+                    Guild.serializeOpPerms(guild.getOperatorPerms()));
 
         }else if(updateType == SyncType.REMOVE_GUILD){
             TridentGuild.getSqlHandler().deleteGuild(guild.getGuildUUID().toString());
@@ -107,11 +107,22 @@ public class GuildManager {
         guild.guildMembers.forEach((name,gMember)->{
             onlinePlayerGuilds.remove(name);
         });
-        unloadGuild(uuid);
+        loadedGuilds.remove(uuid);
     }
 
 
     public void unloadGuild(UUID guildUUID){
+        Guild guild = loadedGuilds.get(guildUUID);
+        TridentGuild.getSqlHandler().updateGuild(guild.getGuildUUID().toString(),guild.getGuildName(),guild.getGuildLevel(),guild.getMinerLevel(),guild.getLumberLevel(),guild.getHunterLevel(),guild.getFarmerLevel(),guild.getBalance(),null,Guild.serializeMemberPerms(guild.memberPerms),Guild.serializeOpPerms(guild.operatorPerms));
         loadedGuilds.remove(guildUUID);
+    }
+    public void saveGuild(UUID guildUUID){
+        Guild guild = loadedGuilds.get(guildUUID);
+        TridentGuild.getSqlHandler().updateGuild(guild.getGuildUUID().toString(),guild.getGuildName(),guild.getGuildLevel(),guild.getMinerLevel(),guild.getLumberLevel(),guild.getHunterLevel(),guild.getFarmerLevel(),guild.getBalance(),null,Guild.serializeMemberPerms(guild.memberPerms),Guild.serializeOpPerms(guild.operatorPerms));
+    }
+    public void unloadAllGuilds(){
+        loadedGuilds.forEach((uuid, guild) -> {
+            saveGuild(uuid);
+        });
     }
 }

@@ -78,11 +78,8 @@ public class RedisListeners implements Listener {
                     break;
                 case JOINED_GUILD:
                     if(!TridentGuild.getGuildManager().loadedGuilds.containsKey(UUID.fromString(inviteRedisData.getTargetPlayerName()))) break;
-                    Utils.debug(UUID.fromString(inviteRedisData.getTargetPlayerName()) + " var");
                     TridentGuild.getGuildManager().loadedGuilds.get(UUID.fromString(inviteRedisData.getTargetPlayerName())).memberList.forEach(member -> {
-                        Utils.debug(member.getPlayer().getName());
                         if(member.getPlayer().isOnline()){
-                            Utils.debug(member.getPlayer().getName() + " online");
                             member.getPlayer().getPlayer().sendMessage(Utils.addColors(Utils.getMessage("player-joined-guild",true).replace("%player%",inviteRedisData.getSendingPlayer())));
                         }
                     });

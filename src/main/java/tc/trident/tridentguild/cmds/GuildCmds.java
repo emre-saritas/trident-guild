@@ -105,18 +105,21 @@ public class GuildCmds implements CommandExecutor {
                         return true;
                     }
 
-                    // Silmek için onaylama
-                    if(!TridentGuild.getInviteHandler().isGuildDeleteCooldownExpired(player.getName())){
-                        TridentGuild.getInviteHandler().removeGuildDeleteCooldown(player.getName());
-                        TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
-                        TridentGuild.getSyncManager().syncGuild(guild,SyncType.REMOVE_GUILD);
-                        TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.REMOVE_GUILD);
-                    }else{
-                        TridentGuild.getInviteHandler().addGuildDeleteCooldown(player.getName());
-                        player.sendMessage(Utils.addColors(Utils.getMessage("guild-remove-again",true)));
+                    deleteGuild(player,guild);
+
+
+                }else if (args[0].equalsIgnoreCase("çık")) {
+                    if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
+                        Utils.sendError(player, "you-not-guild-member");
+                        return true;
                     }
-
-
+                    Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
+                    if (guild.getGuildMember(player.getName()).getPermission() == GuildMember.GuildPermission.OWNER) {
+                        Utils.sendError(player, "cant-quit-from-own");
+                        return true;
+                    }
+                    player.sendMessage(Utils.addColors(Utils.getMessage("quit",true)));
+                    guild.removeGuildMember(player.getName());
                 } else if (args[0].equalsIgnoreCase("yardım")) {
                     Utils.sendHelpMessages(player);
                 }
@@ -222,5 +225,16 @@ public class GuildCmds implements CommandExecutor {
         }
         return true;
     }
-
+    public static void deleteGuild(Player player, Guild guild){
+        // Silmek için onaylama
+        if(!TridentGuild.getInviteHandler().isGuildDeleteCooldownExpired(player.getName())){
+            TridentGuild.getInviteHandler().removeGuildDeleteCooldown(player.getName());
+            TridentGuild.getGuildManager().removeGuild(guild.getGuildUUID());
+            TridentGuild.getSyncManager().syncGuild(guild,SyncType.REMOVE_GUILD);
+            TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.REMOVE_GUILD);
+        }else{
+            TridentGuild.getInviteHandler().addGuildDeleteCooldown(player.getName());
+            player.sendMessage(Utils.addColors(Utils.getMessage("guild-remove-again",true)));
+        }
+    }
 }

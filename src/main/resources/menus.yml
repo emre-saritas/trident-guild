@@ -88,7 +88,7 @@ settings:
       - ""
       - "&eÜye Yetkilerini Düzenle"
       - ""
-  4:
+  3:
     name: "&cLoncayı Sil"
     type: PLAYER_HEAD
     lore:
@@ -99,6 +99,7 @@ settings:
 operator-perms:
   invite:
     name: "&eDavet Yetkisi"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&fOyuncuları davet etme yetkisi."
@@ -107,6 +108,7 @@ operator-perms:
       - ""
   kick:
     name: "&eOyuncu Atma Yetkisi"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&fOyuncuları loncadan atma yetkisi."
@@ -115,6 +117,7 @@ operator-perms:
       - ""
   bannerchange:
     name: "&eFlama Değiştirme Yetkisi"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&fLoncanın flamasını değiştirme"
@@ -124,6 +127,7 @@ operator-perms:
       - ""
   levelup:
     name: "&eLonca Seviye Atlatma Yetkisi"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&fLoncanın seviyesini atlatma yetkisi."
@@ -132,6 +136,7 @@ operator-perms:
       - ""
   upgrade:
     name: "&eLonca Geliştirme Yetkisi"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&fLonca geliştirmesi satın alma yetkisi."
@@ -142,6 +147,7 @@ operator-perms:
 member-perms:
   invite:
     name: "&eDavet Yetkisi"
+    type: PLAYER_HEAD
     lore:
       - ""
       - "&fOyuncuları davet etme yetkisi."

@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.mysql.SyncType;
+import tc.trident.tridentguild.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,13 +60,15 @@ public class Guild {
 
 
 
-    public static String serializePerms(HashMap<String, Boolean> perms){
-        String ser = "";
-        StringBuilder sb = new StringBuilder(ser);
-        perms.forEach((permID, bool) -> {
-            sb.append(bool).append(";");
-        });
-        return sb.toString();
+    public static String serializeOpPerms(HashMap<String, Boolean> perms){
+        return "" + perms.get("guild.invite") + ";" +
+                perms.get("guild.kick") + ";" +
+                perms.get("guild.bannerchange") + ";" +
+                perms.get("guild.levelup") + ";" +
+                perms.get("guild.upgrade");
+    }
+    public static String serializeMemberPerms(HashMap<String, Boolean> perms){
+        return "" + perms.get("guild.invite");
     }
     public static HashMap<String, Boolean> deserializeOpPerms(String str){
         HashMap<String, Boolean> map = new HashMap<>();
