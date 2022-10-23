@@ -33,7 +33,8 @@ number-error: "&cGirdiÄŸiniz sayÄ± geÃ§ersiz."
 no-perm: "&cLonca yetkiniz yetersiz."
 cant-do: "&cBunu yapamazsÄ±nÄ±z."
 banner-set: "&7Yeni lonca flamasÄ± ayarlandÄ±."
-banner-error: "&7Elinde geÃ§erli bir flama yok."
+banner-error: "&cElinde geÃ§erli bir flama yok."
+banner-error-money: "&cLoncada yeterli para olmadığı için flama değiştirilemedi."
 soon: "&cÇok yakında!"
 
 help:

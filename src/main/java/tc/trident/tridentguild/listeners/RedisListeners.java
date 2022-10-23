@@ -8,6 +8,7 @@ import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.invite.InviteRedisData;
+import tc.trident.tridentguild.mysql.GuildChatRedisData;
 import tc.trident.tridentguild.mysql.GuildRedisData;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
@@ -18,10 +19,12 @@ public class RedisListeners implements Listener {
 
     private ChannelAgent<GuildRedisData> agent1;
     private ChannelAgent<InviteRedisData> agent2;
+    private ChannelAgent<GuildChatRedisData> agent3;
 
     public RedisListeners(){
         setupInviteListener();
         setupChannelListener();
+        guildChatListener();
     }
 
     public void setupChannelListener(){
@@ -54,6 +57,17 @@ public class RedisListeners implements Listener {
             }catch (Exception e){
                 throw new RuntimeException(e.getMessage());
             }
+        }));
+    }
+
+    public void guildChatListener(){
+        agent3 = TridentSync.getInstance().getRedis().getChannel("sGuildChat", GuildChatRedisData.class).newAgent();
+        agent3.addListener(((channelAgent, chatRedisData) -> {
+            TridentGuild.getGuildManager().onlinePlayerGuilds.forEach((playerName,guildUUID) -> {
+                if(guildUUID.equals(chatRedisData.getGuildUUID())){
+                    Bukkit.getPlayerExact(playerName).sendMessage(chatRedisData.getMessage());
+                }
+            });
         }));
     }
 
@@ -100,5 +114,6 @@ public class RedisListeners implements Listener {
     public void close(){
         agent1.close();
         agent2.close();
+        agent3.close();
     }
 }

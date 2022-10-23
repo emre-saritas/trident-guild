@@ -23,13 +23,18 @@ public class MemberSettingsMenu implements InventoryProvider {
     }
 
     public void init(Player player, InventoryContents contents){
-        YamlItem bilgi = new YamlItem("member-settings.0");
+        YamlItem bilgi = new YamlItem("member-settings.0",TridentGuild.menus);
         bilgi.replaceLore("%perm%",member.getPermission().getName());
         bilgi.replaceLore("%donated%",Utils.nf.format(member.getTotalDonate()));
         contents.set(1,2,ClickableItem.empty(bilgi.complete()));
-        contents.set(1,4,ClickableItem.of(new YamlItem("member-settings.1").complete(),inventoryClickEvent -> {
+        contents.set(1,4,ClickableItem.of(new YamlItem("member-settings.1",TridentGuild.menus).complete(),inventoryClickEvent -> {
             if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
                 Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
+            if(!TridentGuild.getGuildManager().hasGuild(member.getPlayer().getName())){
+                Utils.sendError(player,"cant-do");
+                player.closeInventory();
                 return;
             }
            if(inventoryClickEvent.isLeftClick()){
@@ -58,9 +63,14 @@ public class MemberSettingsMenu implements InventoryProvider {
                player.closeInventory();
            }
         }));
-        contents.set(1,6,ClickableItem.of(new YamlItem("member-settings.1").complete(),inventoryClickEvent -> {
+        contents.set(1,6,ClickableItem.of(new YamlItem("member-settings.2",TridentGuild.menus).complete(),inventoryClickEvent -> {
             if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
                 Utils.sendError(player, "you-not-guild-member");
+                return;
+            }
+            if(!TridentGuild.getGuildManager().hasGuild(member.getPlayer().getName())){
+                Utils.sendError(player,"cant-do");
+                player.closeInventory();
                 return;
             }
             if(member.getPermission() == GuildMember.GuildPermission.OWNER){

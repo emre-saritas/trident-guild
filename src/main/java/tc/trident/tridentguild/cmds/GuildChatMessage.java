@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.mysql.GuildChatRedisData;
 import tc.trident.tridentguild.utils.Utils;
 
 public class GuildChatMessage implements CommandExecutor {
@@ -24,8 +25,8 @@ public class GuildChatMessage implements CommandExecutor {
             }
             String text = StringUtils.join(args," ");
             String message = ChatColor.translateAlternateColorCodes('&',"&f[&dLonca&f] &e"+player.getName()+": &f");
-            Guild.GuildChatMessage gchat = new Guild.GuildChatMessage(message+text);
-            TridentSync.getInstance().getRedis().getChannel("s"+guild.getGuildUUID()+"-chat", Guild.GuildChatMessage.class).sendMessage(gchat);
+            GuildChatRedisData data = new GuildChatRedisData(guild.getGuildUUID(), message+text, player.getName());
+            TridentSync.getInstance().getRedis().getChannel("sGuildChat", GuildChatRedisData.class).sendMessage(data);
         }else{
             Utils.sendError(player,"you-not-guild-member");
             return true;

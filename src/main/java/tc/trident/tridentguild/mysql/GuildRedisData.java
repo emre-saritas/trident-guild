@@ -1,12 +1,14 @@
 package tc.trident.tridentguild.mysql;
 
 import tc.trident.tridentguild.Guild;
+import tc.trident.tridentguild.utils.Utils;
 
 public class GuildRedisData {
 
-    private Guild newGuild;
-    private SyncType type;
-    private String playerName;
+    private final Guild newGuild;
+    private final SyncType type;
+    private final String playerName;
+
 
     public GuildRedisData(Guild newGuild, SyncType type, String playerName) {
         this.newGuild = newGuild;
@@ -15,6 +17,7 @@ public class GuildRedisData {
     }
 
     public Guild getNewGuild() {
+        Utils.debug("get "+newGuild.serializePatterns());
         return newGuild;
     }
 

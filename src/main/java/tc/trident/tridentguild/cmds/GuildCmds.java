@@ -66,9 +66,12 @@ public class GuildCmds implements CommandExecutor {
                         Utils.sendError(player,"invite-none");
                         return true;
                     }
-
                     Invite invite = TridentGuild.getInviteHandler().getInvite(player.getName());
-
+                    Guild guild = TridentGuild.getSqlHandler().getGuild(invite.getGuildUUID());
+                    if(guild.isGuildFull()){
+                        Utils.sendError(player,"guild-full");
+                        return true;
+                    }
                     if(!TridentGuild.getGuildManager().loadedGuilds.containsKey(invite.getGuildUUID())){
                         TridentGuild.getGuildManager().loadGuild(invite.getGuildUUID());
                     }
@@ -158,8 +161,6 @@ public class GuildCmds implements CommandExecutor {
                         Utils.sendError(player,"guild-full");
                         return true;
                     }
-
-
                     switch (guild.getGuildMember(player.getName()).getPermission()) {
                         case MEMBER:
                             if (!guild.memberPerms.get("guild.invite")) {

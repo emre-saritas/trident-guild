@@ -6,6 +6,9 @@ import fr.minuskube.inv.content.InventoryContents;
 import fr.minuskube.inv.content.InventoryProvider;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildManager;
 import tc.trident.tridentguild.TridentGuild;
@@ -27,6 +30,7 @@ public class GeneralGuildMenu implements InventoryProvider {
         item.replaceLore("%level%",guild.getGuildLevel()+"");
         item.replaceLore("%limit%",TridentGuild.upgrades.getInt("guild.levels."+guild.getGuildLevel()+".limit")+"");
         item.replaceLore("%money%", Utils.nf.format(guild.getBalance()));
+
         contents.set(1,1, ClickableItem.empty(item.complete()));
         item = new YamlItem("general-guild.1", TridentGuild.menus);
         contents.set(1,3, ClickableItem.of(item.complete(),inventoryClickEvent -> {

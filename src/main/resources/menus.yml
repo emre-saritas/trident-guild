@@ -3,8 +3,7 @@
 general-guild:
   0:
     name: "&eLonca Genel"
-    type: PLAYER_HEAD
-    head-value: ""
+    type: WHITE_BANNER
     lore:
       - ""
       - "&eİsim: %name%"
@@ -65,6 +64,7 @@ member-settings:
       - ""
   2:
     name: "&cOyuncuyu At"
+    type: PLAYER_HEAD
 
 settings:
   0:

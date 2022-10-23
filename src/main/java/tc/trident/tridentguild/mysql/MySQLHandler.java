@@ -5,15 +5,14 @@
 
 package tc.trident.tridentguild.mysql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
+
+import org.bukkit.Material;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
@@ -28,13 +27,12 @@ public class MySQLHandler {
         this.plugin = plugin;
     }
 
-    public void updateGuild(String uuid, String name, int level, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, float balance, String bannerMeta, String memberPerms, String opPerms){
+    public void updateGuild(String uuid, String name, int level, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, float balance, String bannerPatterns, String memberPerms, String opPerms, String bannerMaterial){
         Connection conn = this.sql.getConnection();
 
         try {
-            PreparedStatement st = conn.prepareStatement("REPLACE INTO survival_Guild SET `uuid` = ? , `name` = ? , `level` = ? , `minerLevel` = ? , `lumberLevel` = ? , `hunterLevel` = ?, farmerLevel = ?, balance = ?, bannerMeta = ?, memberPerms = ?,opPerms = ?");
+            PreparedStatement st = conn.prepareStatement("REPLACE INTO survival_Guild SET `uuid` = ? , `name` = ? , `level` = ? , `minerLevel` = ? , `lumberLevel` = ? , `hunterLevel` = ?, farmerLevel = ?, balance = ?, bannerPatterns = ?, memberPerms = ?,opPerms = ?, bannerMaterial = ?");
             Throwable var12 = null;
-
             try {
                 st.setString(1, uuid);
                 st.setString(2, name);
@@ -44,9 +42,10 @@ public class MySQLHandler {
                 st.setInt(6, hunterLevel);
                 st.setInt(7, farmerLevel);
                 st.setFloat(8, balance);
-                st.setString(9, bannerMeta);
+                st.setString(9, bannerPatterns);
                 st.setString(10, memberPerms);
                 st.setString(11, opPerms);
+                st.setString(12, bannerMaterial);
                 st.executeUpdate();
                 Utils.debug("[TridentGuild] MySQL updated "+uuid);
             } catch (Throwable var22) {
@@ -223,7 +222,8 @@ public class MySQLHandler {
                 List<GuildMember> members = new ArrayList<>(getGuildMembers(uuid.toString()));
                 // member create
                 guild = new Guild(UUID.fromString(uuid.toString()),result.getString("name"),
-                        null,
+                        Guild.deserializePatterns(result.getString("bannerPatterns")),
+                        Material.valueOf(result.getString("bannerMaterial")),
                         result.getInt("level"),
                         result.getInt("balance"),
                         result.getInt("minerLevel"),

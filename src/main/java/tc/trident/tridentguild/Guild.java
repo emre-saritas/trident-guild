@@ -1,16 +1,16 @@
 package tc.trident.tridentguild;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Guild {
     public HashMap<String, GuildMember> guildMembers = new HashMap<>();
@@ -21,6 +21,8 @@ public class Guild {
     private final UUID guildUUID;
     private int minerLevel = 0;
     private int lumberLevel = 0;
+    private HashMap<PatternType, DyeColor> patterns;
+    private Material bannerMaterial = Material.WHITE_BANNER;
     private int hunterLevel = 0;
     private int farmerLevel = 0;
     private int guildLevel;
@@ -29,33 +31,31 @@ public class Guild {
     public Guild(UUID guildUUID, String guildName){
         this.guildUUID=guildUUID;
         this.guildName=guildName;
-        ItemStack bannerItem = new ItemStack(Material.WHITE_BANNER);
-        //this.bannerMeta = (BannerMeta) bannerItem.getItemMeta();
         this.guildLevel = 0;
         this.balance = 0;
+        this.patterns = new HashMap<>();
         this.memberPerms.put("guild.invite",false);
         this.operatorPerms.put("guild.invite",true);
         this.operatorPerms.put("guild.kick",false);
         this.operatorPerms.put("guild.bannerchange",false);
         this.operatorPerms.put("guild.levelup",false);
         this.operatorPerms.put("guild.upgrade",false);
-        guildChatListener();
     }
 
-    public Guild(UUID guildUUID, String guildName, BannerMeta bannerMeta, int guildLevel, float balance, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
+    public Guild(UUID guildUUID, String guildName, HashMap<PatternType, DyeColor> bannerPatterns, Material bannerMaterial,int guildLevel, float balance, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
         this.guildUUID=guildUUID;
         this.guildName=guildName;
-        //this.bannerMeta = bannerMeta;
         this.guildLevel = guildLevel;
         this.minerLevel = minerLevel;
         this.lumberLevel = lumberLevel;
         this.hunterLevel = hunterLevel;
         this.farmerLevel = farmerLevel;
         this.balance = balance;
+        this.bannerMaterial = bannerMaterial;
+        this.patterns = new HashMap<>(bannerPatterns);
         setGuildMembers(guildMembers);
         setGuildPermissions(memberPerms,operatorPerms);
         memberList.addAll(this.guildMembers.values());
-        guildChatListener();
     }
 
 
@@ -86,7 +86,40 @@ public class Guild {
         map.put("guild.invite",Boolean.valueOf(bools[0]));
         return map;
     }
+    public String serializePatterns(){
+        if(patterns.size() == 0 ) return null;
+        StringBuilder sb = new StringBuilder();
+        patterns.forEach((patternType, dyeColor) -> {
+            sb.append(patternType+":"+dyeColor+";");
+        });
+        return sb.toString();
+    }
+    public static HashMap<PatternType, DyeColor> deserializePatterns(String patternStr){
+        HashMap<PatternType, DyeColor> map = new HashMap<>();
+        if(patternStr == null) return map;
+        String[] patterns = patternStr.split(";");
+        for(String pattern : patterns){
+            map.put(PatternType.valueOf(pattern.split(":")[0]),DyeColor.valueOf(pattern.split(":")[1]));
+        }
+        return map;
+    }
 
+    public void setBannerPatterns(BannerMeta bannerMeta){
+        this.patterns = new HashMap<>();
+        bannerMeta.getPatterns().forEach(pattern -> {
+            this.patterns.put(pattern.getPattern(),pattern.getColor());
+        });
+    }
+    public ItemStack getGuildBanner(){
+        ItemStack banner = new ItemStack(bannerMaterial);
+        if(patterns.size() == 0) return banner;
+        BannerMeta meta = (BannerMeta) banner.getItemMeta();
+        patterns.forEach((patternType, dyeColor) -> {
+            meta.addPattern(new Pattern(dyeColor,patternType));
+        });
+        banner.setItemMeta(meta);
+        return banner;
+    }
     public int getMaxPlayers(){
         return TridentGuild.upgrades.getInt("guild.levels."+guildLevel+".limit");
     }
@@ -95,25 +128,6 @@ public class Guild {
     }
     public int getGuildSize(){
         return memberList.size();
-    }
-    public void guildChatListener(){
-        TridentSync.getInstance().getRedis().getChannel("s"+getGuildUUID()+"-chat",Guild.GuildChatMessage.class).newAgent().addListener(((channelAgent, guildChatMessage) -> {
-            memberList.forEach(guildMember -> {
-                if(guildMember.getPlayer().isOnline()){
-                    guildMember.getPlayer().getPlayer().sendMessage(guildChatMessage.getMessage());
-                }
-            });
-        }));
-    }
-
-    public static class GuildChatMessage{
-        private final String message;
-        public GuildChatMessage(String message){
-            this.message = message;
-        }
-        public String getMessage(){
-            return this.message;
-        }
     }
     public boolean isGuildMember(String playerName){
         return guildMembers.containsKey(playerName);
@@ -135,6 +149,9 @@ public class Guild {
     }
     public String getGuildName() {
         return guildName;
+    }
+    public Material getBannerMaterial() {
+        return bannerMaterial;
     }
     public void makeMember(String playerName){
         guildMembers.get(playerName).makeMember();
