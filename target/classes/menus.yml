@@ -1,0 +1,171 @@
+
+
+general-guild:
+  0:
+    name: "&eLonca Genel"
+    type: WHITE_BANNER
+    lore:
+      - ""
+      - "&eİsim: %name%"
+      - "&eSeviye: %level%"
+      - "&eÜye Sayısı: %count%"
+      - "&eÜye Sınırı: %limit%"
+      - "&eBanka: %money%"
+      - "&eOluşturulma Tarihi: %since%"
+      - ""
+  1:
+    name: "&eÜyeler"
+    type: PLAYER_HEAD
+    head-value: ""
+    lore:
+      - ""
+  2:
+    name: "&eGeliştirmeler"
+    type: PLAYER_HEAD
+    head-value: ""
+    lore:
+      - ""
+  3:
+    name: "&eAyarlar"
+    type: PLAYER_HEAD
+    head-value: ""
+    lore:
+      - ""
+  4:
+    name: "&eFlama"
+    type: WHITE_BANNER
+    lore:
+      - ""
+members:
+  member:
+    name: "&e%name%"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&eYetki: %perm%"
+      - "&eBağış: %donated%"
+      - ""
+      - "&6Ayarlar için tıklayın"
+member-settings:
+  0:
+    name: "&eOyuncu Bilgileri"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&eYetki: %perm%"
+      - "&eBağış: %donated%"
+      - ""
+  1:
+    name: "&eYetki Ayarla"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&eYetki Yükselt: &fSol-Tık"
+      - "&eYetki Düşür: &fSağ-Tık"
+      - ""
+  2:
+    name: "&cOyuncuyu At"
+    type: PLAYER_HEAD
+
+settings:
+  0:
+    name: "&eFlama Değiştir"
+    type: WHITE_BANNER
+    lore:
+      - ""
+      - "&eFlama Değişimi"
+      - ""
+  1:
+    name: "&eOperatör Yetkileri"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&eOperatör Yetkilerini Düzenle"
+      - ""
+  2:
+    name: "&eÜye Yetkileri"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&eÜye Yetkilerini Düzenle"
+      - ""
+  3:
+    name: "&cLoncayı Sil"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&eOperatör Yetkilerini Düzenle"
+      - ""
+  4:
+    kapali:
+      name: "&cÜyeler Arası PvP Kapalı"
+      type: PLAYER_HEAD
+      lore:
+        - ""
+        - "&eOperatör Yetkilerini Düzenle"
+        - ""
+    acik:
+      name: "&aÜyeler Arası PvP Açık"
+      type: PLAYER_HEAD
+      lore:
+        - ""
+        - "&eOperatör Yetkilerini Düzenle"
+        - ""
+operator-perms:
+  invite:
+    name: "&eDavet Yetkisi"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&fOyuncuları davet etme yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+  kick:
+    name: "&eOyuncu Atma Yetkisi"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&fOyuncuları loncadan atma yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+  bannerchange:
+    name: "&eFlama Değiştirme Yetkisi"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&fLoncanın flamasını değiştirme"
+      - "&fyetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+  levelup:
+    name: "&eLonca Seviye Atlatma Yetkisi"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&fLoncanın seviyesini atlatma yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+  upgrade:
+    name: "&eLonca Geliştirme Yetkisi"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&fLonca geliştirmesi satın alma yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""
+
+member-perms:
+  invite:
+    name: "&eDavet Yetkisi"
+    type: PLAYER_HEAD
+    lore:
+      - ""
+      - "&fOyuncuları davet etme yetkisi."
+      - ""
+      - "&fDurum: %state%"
+      - ""

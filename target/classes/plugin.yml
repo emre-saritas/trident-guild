@@ -1,0 +1,19 @@
+name: TridentGuild
+author: EmreSaritas
+version: 1.0
+api-version: 1.16
+main: tc.trident.tridentguild.TridentGuild
+
+
+commands:
+  tridentguild:
+    description: tridentguild
+    usage: /tridentguild
+  lonca:
+    description: lonca
+    usage: /lonca
+  lmsg:
+    description: lmsg
+    usage: /lmsg
+
+depend: [TridentSync, helper, helper-redis]
