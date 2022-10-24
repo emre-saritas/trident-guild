@@ -30,6 +30,7 @@ public class GeneralGuildMenu implements InventoryProvider {
         item.replaceLore("%level%",guild.getGuildLevel()+"");
         item.replaceLore("%limit%",TridentGuild.upgrades.getInt("guild.levels."+guild.getGuildLevel()+".limit")+"");
         item.replaceLore("%money%", Utils.nf.format(guild.getBalance()));
+        item.replaceLore("%since%", guild.getCreateDate());
 
         contents.set(1,1, ClickableItem.empty(item.complete()));
         item = new YamlItem("general-guild.1", TridentGuild.menus);
@@ -38,7 +39,7 @@ public class GeneralGuildMenu implements InventoryProvider {
                 Utils.sendError(player, "you-not-guild-member");
                 return;
             }
-            MembersMenu.openMenu(player);
+            MembersMenu.openMenu(player, null);
         }));
         item = new YamlItem("general-guild.2", TridentGuild.menus);
         contents.set(1,5, ClickableItem.of(item.complete(),inventoryClickEvent -> {

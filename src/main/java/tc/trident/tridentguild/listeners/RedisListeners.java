@@ -34,6 +34,7 @@ public class RedisListeners implements Listener {
                 Utils.debug("[TridentGuild] Redis data received - "+redisData.getType());
 
                 if(redisData.getType() == SyncType.UPDATE){
+                    if(!TridentGuild.getGuildManager().guildNames.contains(redisData.getNewGuild().getGuildName().toLowerCase())) TridentGuild.getGuildManager().guildNames.add(redisData.getNewGuild().getGuildName().toLowerCase());
                     if(!TridentGuild.getGuildManager().loadedGuilds.containsKey(redisData.getNewGuild().getGuildUUID())) return;
                     TridentGuild.getSyncManager().updateGuild(redisData.getNewGuild());
 
@@ -92,7 +93,7 @@ public class RedisListeners implements Listener {
                     break;
                 case JOINED_GUILD:
                     if(!TridentGuild.getGuildManager().loadedGuilds.containsKey(UUID.fromString(inviteRedisData.getTargetPlayerName()))) break;
-                    TridentGuild.getGuildManager().loadedGuilds.get(UUID.fromString(inviteRedisData.getTargetPlayerName())).memberList.forEach(member -> {
+                    TridentGuild.getGuildManager().loadedGuilds.get(UUID.fromString(inviteRedisData.getTargetPlayerName())).guildMembers.forEach((playerName, member) -> {
                         if(member.getPlayer().isOnline()){
                             member.getPlayer().getPlayer().sendMessage(Utils.addColors(Utils.getMessage("player-joined-guild",true).replace("%player%",inviteRedisData.getSendingPlayer())));
                         }

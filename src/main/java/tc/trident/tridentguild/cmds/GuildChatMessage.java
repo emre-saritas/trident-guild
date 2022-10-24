@@ -24,7 +24,7 @@ public class GuildChatMessage implements CommandExecutor {
                 return false;
             }
             String text = StringUtils.join(args," ");
-            String message = ChatColor.translateAlternateColorCodes('&',"&f[&dLonca&f] &e"+player.getName()+": &f");
+            String message = ChatColor.translateAlternateColorCodes('&',"&f[&d"+guild.getGuildName()+"&f] &e"+player.getName()+": &f");
             GuildChatRedisData data = new GuildChatRedisData(guild.getGuildUUID(), message+text, player.getName());
             TridentSync.getInstance().getRedis().getChannel("sGuildChat", GuildChatRedisData.class).sendMessage(data);
         }else{

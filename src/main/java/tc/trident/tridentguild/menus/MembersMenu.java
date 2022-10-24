@@ -12,19 +12,33 @@ import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MembersMenu implements InventoryProvider {
 
     private int col=0;
     private int row=0;
     private int page=0;
+    private List<String> playerNames;
 
-    public MembersMenu(){
+    public MembersMenu(List<String> playerNames){
+        if(playerNames != null)
+            this.playerNames = new ArrayList<>(playerNames);
+        else
+            this.playerNames = new ArrayList<>();
     }
 
     public void init(Player player, InventoryContents contents){
         Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
+        if(page == 0){
+            guild.guildMembers.forEach((playerName, member) -> {
+                playerNames.add(playerName);
+            });
+        }
+
         for(int i = page*45; i<guild.guildMembers.size(); i++){
-            GuildMember guildMember = guild.memberList.get(i);
+            GuildMember guildMember = guild.guildMembers.get(playerNames.get(i));
             contents.set(row,col,ClickableItem.of(guildMember.getMemberShowItem(),inventoryClickEvent -> {
                 Guild guildClick = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
                 if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
@@ -39,6 +53,7 @@ public class MembersMenu implements InventoryProvider {
                 if(guildClick.getGuildMember(player.getName()).getPermission() == GuildMember.GuildPermission.MEMBER){
                     Utils.sendError(player,"no-perm");
                     player.closeInventory();
+                    return;
                 }
                 MemberSettingsMenu.openMenu(player,guildMember.getPlayer().getName());
             }));
@@ -52,10 +67,10 @@ public class MembersMenu implements InventoryProvider {
 
 
 
-    public static void openMenu(Player player){
+    public static void openMenu(Player player, List<String> playerNames){
         SmartInventory INVENTORY = SmartInventory.builder() //  Builds the menu
                 .id("guild-members")
-                .provider(new MembersMenu())
+                .provider(new MembersMenu(playerNames))
                 .size(3, 9)
                 .title(ChatColor.BLACK + "Lonca Üyeleri")
                 .build();

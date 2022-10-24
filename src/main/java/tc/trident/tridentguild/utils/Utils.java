@@ -133,7 +133,7 @@ public class Utils {
     }
     public static void sendHelpMessages(Player player){
         for(String message : TridentGuild.messages.getStringList("help")){
-            player.sendMessage(Utils.addColors(Utils.skytcprefix+message));
+            player.sendMessage(Utils.addColors(message));
         }
     }
     public static void debug(String debugMessage){

@@ -27,11 +27,11 @@ public class MySQLHandler {
         this.plugin = plugin;
     }
 
-    public void updateGuild(String uuid, String name, int level, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, float balance, String bannerPatterns, String memberPerms, String opPerms, String bannerMaterial){
+    public void updateGuild(String uuid, String name, int level, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, float balance, String bannerPatterns, String memberPerms, String opPerms, String bannerMaterial, String createDate, boolean pvp){
         Connection conn = this.sql.getConnection();
 
         try {
-            PreparedStatement st = conn.prepareStatement("REPLACE INTO survival_Guild SET `uuid` = ? , `name` = ? , `level` = ? , `minerLevel` = ? , `lumberLevel` = ? , `hunterLevel` = ?, farmerLevel = ?, balance = ?, bannerPatterns = ?, memberPerms = ?,opPerms = ?, bannerMaterial = ?");
+            PreparedStatement st = conn.prepareStatement("REPLACE INTO survival_Guild SET `uuid` = ? , `name` = ? , `level` = ? , `minerLevel` = ? , `lumberLevel` = ? , `hunterLevel` = ?, farmerLevel = ?, balance = ?, bannerPatterns = ?, memberPerms = ?,opPerms = ?, bannerMaterial = ?, createDate = ?, pvp = ?");
             Throwable var12 = null;
             try {
                 st.setString(1, uuid);
@@ -46,6 +46,8 @@ public class MySQLHandler {
                 st.setString(10, memberPerms);
                 st.setString(11, opPerms);
                 st.setString(12, bannerMaterial);
+                st.setString(13, createDate);
+                st.setBoolean(14, pvp);
                 st.executeUpdate();
                 Utils.debug("[TridentGuild] MySQL updated "+uuid);
             } catch (Throwable var22) {
@@ -202,7 +204,24 @@ public class MySQLHandler {
         }
 
     }
+    public List<String> getGuildNames(){
+        Connection conn = this.sql.getConnection();
+        List<String> names = new ArrayList<>();
+        try {
+            PreparedStatement st = conn.prepareStatement("SELECT name FROM survival_Guild");
+            st.executeQuery();
 
+            ResultSet result = st.executeQuery();
+            while (result.next()){
+                String str = result.getString("name").toLowerCase();
+                names.add(str);
+            }
+        } catch (SQLException var7) {
+            var7.printStackTrace();
+            return null;
+        }
+        return names;
+    }
     public boolean hasGuild(String playerName){
         UUID uuid = TridentGuild.getSqlHandler().getGuildUUID(playerName);
         return uuid != null;
@@ -232,7 +251,9 @@ public class MySQLHandler {
                         result.getInt("farmerLevel"),
                         members,
                         Guild.deserializeMemberPerms(result.getString("memberPerms")),
-                        Guild.deserializeOpPerms(result.getString("opPerms")));
+                        Guild.deserializeOpPerms(result.getString("opPerms")),
+                        result.getString("createDate"),
+                        result.getBoolean("pvp"));
             }
         } catch (SQLException var7) {
             var7.printStackTrace();

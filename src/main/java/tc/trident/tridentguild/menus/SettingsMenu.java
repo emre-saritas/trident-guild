@@ -46,6 +46,16 @@ public class SettingsMenu implements InventoryProvider {
             }
             ItemStack newBanner = player.getInventory().getItemInMainHand();
             if(newBanner.getType().toString().contains("BANNER") && !newBanner.getType().toString().contains("BANNER_PATTERN")){
+                if(guild.getGuildMember(player.getName()).getPermission() == GuildMember.GuildPermission.MEMBER){
+                    Utils.sendError(player,"no-perm");
+                    player.closeInventory();
+                    return;
+                }
+                if(!hasPermission("guild.bannerchange",guild.getGuildMember(player.getName()).getPermission(),guild)){
+                    Utils.sendError(player,"no-perm");
+                    player.closeInventory();
+                    return;
+                }
                 if(guildClick.getBalance()<TridentGuild.config.getInt("banner-change-price")){
                     Utils.sendError(player,"banner-error-money");
                     player.closeInventory();
@@ -54,7 +64,7 @@ public class SettingsMenu implements InventoryProvider {
                 BannerMeta newMeta = (BannerMeta) newBanner.getItemMeta().clone();
                 guildClick.setBalance(guildClick.getBalance()-TridentGuild.config.getInt("banner-change-price"));
                 guildClick.setBannerPatterns(newMeta);
-
+                guildClick.setBannerMaterial(newBanner.getType());
                 TridentGuild.getSyncManager().syncGuild(guildClick,SyncType.UPDATE);
                 TridentGuild.getGuildManager().syncToSqlGuild(guildClick, SyncType.UPDATE);
                 player.sendMessage(Utils.addColors(Utils.getMessage("banner-set",true)));
@@ -107,10 +117,38 @@ public class SettingsMenu implements InventoryProvider {
             GuildCmds.deleteGuild(player,guildClick);
             player.closeInventory();
         }));
+        if(guild.isPvp()){
+            item = new YamlItem("settings.4.acik",TridentGuild.menus);
+        }else{
+            item = new YamlItem("settings.4.kapali",TridentGuild.menus);
+        }
+        contents.set(2,4,ClickableItem.of(item.complete(), inventoryClickEvent -> {
+            if(guild.getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
+                Utils.sendError(player,"not-owner");
+                player.closeInventory();
+                return;
+            }
+            if(guild.isPvp()){
+                guild.setPvp(false);
+                player.sendMessage(Utils.addColors(Utils.getMessage("pvp-change",true).replace("%state%","&cKapalı")));
+            }else{
+                guild.setPvp(true);
+                player.sendMessage(Utils.addColors(Utils.getMessage("pvp-change",true).replace("%state%","&aAçık")));
+            }
+            SettingsMenu.openMenu(player);
+        }));
     }
 
 
-
+    public boolean hasPermission(String tag, GuildMember.GuildPermission permission, Guild guild){
+        if(permission == GuildMember.GuildPermission.OWNER) return true;
+        if(permission == GuildMember.GuildPermission.MEMBER) return false;
+        if(!guild.operatorPerms.get(tag)){
+            return false;
+        }else{
+            return true;
+        }
+    }
     public static void openMenu(Player player){
         SmartInventory INVENTORY = SmartInventory.builder() //  Builds the menu
                 .id("guild-settings")

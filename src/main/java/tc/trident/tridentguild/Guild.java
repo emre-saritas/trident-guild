@@ -10,21 +10,24 @@ import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Guild {
     public HashMap<String, GuildMember> guildMembers = new HashMap<>();
-    public List<GuildMember> memberList = new ArrayList<>();
     public HashMap<String, Boolean> memberPerms = new HashMap<>();
     public HashMap<String, Boolean> operatorPerms = new HashMap<>();
     private final String guildName;
     private final UUID guildUUID;
+    public transient SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final String createDate;
     private int minerLevel = 0;
     private int lumberLevel = 0;
     private HashMap<PatternType, DyeColor> patterns;
     private Material bannerMaterial = Material.WHITE_BANNER;
     private int hunterLevel = 0;
     private int farmerLevel = 0;
+    private boolean pvp = false;
     private int guildLevel;
     private float balance;
 
@@ -34,6 +37,7 @@ public class Guild {
         this.guildLevel = 0;
         this.balance = 0;
         this.patterns = new HashMap<>();
+        this.createDate = dateFormat.format(new Date());
         this.memberPerms.put("guild.invite",false);
         this.operatorPerms.put("guild.invite",true);
         this.operatorPerms.put("guild.kick",false);
@@ -42,7 +46,7 @@ public class Guild {
         this.operatorPerms.put("guild.upgrade",false);
     }
 
-    public Guild(UUID guildUUID, String guildName, HashMap<PatternType, DyeColor> bannerPatterns, Material bannerMaterial,int guildLevel, float balance, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms) {
+    public Guild(UUID guildUUID, String guildName, HashMap<PatternType, DyeColor> bannerPatterns, Material bannerMaterial,int guildLevel, float balance, int minerLevel, int lumberLevel, int hunterLevel, int farmerLevel, List<GuildMember> guildMembers, HashMap<String, Boolean> memberPerms, HashMap<String, Boolean> operatorPerms, String createDate, boolean pvp) {
         this.guildUUID=guildUUID;
         this.guildName=guildName;
         this.guildLevel = guildLevel;
@@ -53,9 +57,10 @@ public class Guild {
         this.balance = balance;
         this.bannerMaterial = bannerMaterial;
         this.patterns = new HashMap<>(bannerPatterns);
+        this.createDate = createDate;
+        this.pvp = pvp;
         setGuildMembers(guildMembers);
         setGuildPermissions(memberPerms,operatorPerms);
-        memberList.addAll(this.guildMembers.values());
     }
 
 
@@ -120,14 +125,11 @@ public class Guild {
         banner.setItemMeta(meta);
         return banner;
     }
-    public int getMaxPlayers(){
-        return TridentGuild.upgrades.getInt("guild.levels."+guildLevel+".limit");
+    public String getCreateDate() {
+        return createDate;
     }
     public boolean isGuildFull(){
-        return getMaxPlayers() <= getGuildSize();
-    }
-    public int getGuildSize(){
-        return memberList.size();
+        return TridentGuild.upgrades.getInt("guild.levels."+guildLevel+".limit") <= guildMembers.size();
     }
     public boolean isGuildMember(String playerName){
         return guildMembers.containsKey(playerName);
@@ -162,7 +164,19 @@ public class Guild {
     public int getGuildLevel() {
         return guildLevel;
     }
+    public boolean isPvp() {
+        return pvp;
+    }
 
+    public void setBannerMaterial(Material bannerMaterial) {
+        this.bannerMaterial = bannerMaterial;
+    }
+
+    public void setPvp(boolean pvp) {
+        this.pvp = pvp;
+        TridentGuild.getSyncManager().syncGuild(this,SyncType.UPDATE);
+        TridentGuild.getGuildManager().syncToSqlGuild(this, SyncType.UPDATE);
+    }
     public void setFarmerLevel(int farmerLevel) {
         this.farmerLevel = farmerLevel;
     }
@@ -227,14 +241,12 @@ public class Guild {
         TridentGuild.getGuildManager().onlinePlayerGuilds.put(playerName, guildUUID);
         GuildMember guildMember = new GuildMember(playerName, permission);
         guildMembers.put(playerName,guildMember);
-        memberList.add(guildMember);
         TridentGuild.getSyncManager().syncGuild(this,SyncType.UPDATE);
         TridentGuild.getGuildManager().syncToSqlGuildMember(guildMember, getGuildUUID(), SyncType.UPDATE);
     }
     public void removeGuildMember(String playerName){
         TridentGuild.getGuildManager().onlinePlayerGuilds.remove(playerName);
         TridentGuild.getGuildManager().syncToSqlGuildMember(guildMembers.get(playerName), getGuildUUID(), SyncType.REMOVE_PLAYER);
-        memberList.remove(guildMembers.get(playerName));
         guildMembers.remove(playerName);
         TridentGuild.getSyncManager().syncGuild(this,SyncType.REMOVE_PLAYER, playerName);
     }

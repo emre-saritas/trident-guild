@@ -1,10 +1,12 @@
 package tc.trident.tridentguild.cmds;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import tc.trident.tridentguild.Guild;
+import tc.trident.tridentguild.GuildScroll;
 import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
@@ -32,6 +34,22 @@ public class AdminCmds implements CommandExecutor {
                     player.sendMessage(Utils.addColors(Utils.getMessage("guild-removed",true)));
                 }
 
+            }else if(args.length == 3){
+                if(args[0].equalsIgnoreCase("give")){
+                    if(Bukkit.getServer().getOnlinePlayers().contains(Bukkit.getPlayerExact(args[1]))) {
+                        int amount = Integer.parseInt(args[2]);
+                        Bukkit.getPlayerExact(args[1]).getInventory().addItem(GuildScroll.getItem(amount));
+                    }
+                }
+            }
+        }else{
+            if(args.length == 3){
+                if(args[0].equalsIgnoreCase("give")){
+                    if(Bukkit.getServer().getOnlinePlayers().contains(Bukkit.getPlayerExact(args[1]))) {
+                        int amount = Integer.parseInt(args[2]);
+                        Bukkit.getPlayerExact(args[1]).getInventory().addItem(GuildScroll.getItem(amount));
+                    }
+                }
             }
         }
 

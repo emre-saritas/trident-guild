@@ -11,6 +11,7 @@ general-guild:
       - "&eÜye Sayısı: %count%"
       - "&eÜye Sınırı: %limit%"
       - "&eBanka: %money%"
+      - "&eOluşturulma Tarihi: %since%"
       - ""
   1:
     name: "&eÜyeler"
@@ -95,7 +96,21 @@ settings:
       - ""
       - "&eOperatör Yetkilerini Düzenle"
       - ""
-      -
+  4:
+    kapali:
+      name: "&cÜyeler Arası PvP Kapalı"
+      type: PLAYER_HEAD
+      lore:
+        - ""
+        - "&eOperatör Yetkilerini Düzenle"
+        - ""
+    acik:
+      name: "&aÜyeler Arası PvP Açık"
+      type: PLAYER_HEAD
+      lore:
+        - ""
+        - "&eOperatör Yetkilerini Düzenle"
+        - ""
 operator-perms:
   invite:
     name: "&eDavet Yetkisi"

@@ -55,7 +55,7 @@ public class MemberPermsMenu implements InventoryProvider {
         }
         TridentGuild.getSyncManager().syncGuild(guild, SyncType.UPDATE);
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK,1,1);
-        OperatorPermsMenu.openMenu(player);
+        MemberPermsMenu.openMenu(player);
     }
     public ItemStack getItem(String id){
         YamlItem item = new YamlItem("member-perms."+id, TridentGuild.menus);
@@ -69,7 +69,7 @@ public class MemberPermsMenu implements InventoryProvider {
     public static void openMenu(Player player){
         SmartInventory INVENTORY = SmartInventory.builder() //  Builds the menu
                 .id("guild-member-perms")
-                .provider(new OperatorPermsMenu(player.getName()))
+                .provider(new MemberPermsMenu(player.getName()))
                 .size(3, 9)
                 .title(ChatColor.BLACK + "Üye Yetkileri")
                 .build();

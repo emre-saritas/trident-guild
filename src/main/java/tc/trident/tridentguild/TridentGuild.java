@@ -15,10 +15,7 @@ import tc.trident.tridentguild.cmds.GuildCmds;
 import tc.trident.tridentguild.invite.InviteHandler;
 import tc.trident.tridentguild.listeners.PlayerServerListeners;
 import tc.trident.tridentguild.listeners.RedisListeners;
-import tc.trident.tridentguild.mysql.MySQL;
-import tc.trident.tridentguild.mysql.MySQLHandler;
-import tc.trident.tridentguild.mysql.MySQLManager;
-import tc.trident.tridentguild.mysql.SyncManager;
+import tc.trident.tridentguild.mysql.*;
 import tc.trident.tridentguild.utils.Yaml;
 
 public class TridentGuild extends ExtendedJavaPlugin {
@@ -53,6 +50,9 @@ public class TridentGuild extends ExtendedJavaPlugin {
             this.getCommand("lmsg").setExecutor((CommandExecutor) new GuildChatMessage());
             if (!setupEconomy()) {
                 getServer().getPluginManager().disablePlugin(this);
+            }
+            if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+                new GuildPlaceholders().register();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

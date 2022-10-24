@@ -2,3 +2,15 @@ debug-mode: true
 
 invite-time: 5
 banner-change-price: 5000
+guild-name-length: 15
+
+
+guild-scroll:
+  glow: true
+  name: "&dLonca Parşomeni"
+  type: MAP
+  lore:
+    - "&7&oTek Kullanımlık"
+    - ""
+    - "&dLonca Parşomen"
+    - ""

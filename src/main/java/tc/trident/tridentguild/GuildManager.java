@@ -1,6 +1,8 @@
 package tc.trident.tridentguild;
 
 import org.bukkit.Bukkit;
+import tc.trident.tridentguild.listeners.GuildListeners;
+import tc.trident.tridentguild.listeners.PlayerServerListeners;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
 
@@ -19,6 +21,8 @@ public class GuildManager {
     public GuildManager(){
         loadOnlinePlayerGuildUUIDs();
         loadOnlineGuilds();
+        guildNames.addAll(TridentGuild.getSqlHandler().getGuildNames());
+        Bukkit.getPluginManager().registerEvents(new GuildListeners(),TridentGuild.getInstance());
     }
 
 
@@ -37,7 +41,9 @@ public class GuildManager {
                     guild.serializePatterns(),
                     Guild.serializeMemberPerms(guild.getMemberPerms()),
                     Guild.serializeOpPerms(guild.getOperatorPerms()),
-                    guild.getBannerMaterial().toString());
+                    guild.getBannerMaterial().toString(),
+                    guild.getCreateDate(),
+                    guild.isPvp());
         }else if(updateType == SyncType.REMOVE_GUILD){
             TridentGuild.getSqlHandler().deleteGuild(guild.getGuildUUID().toString());
         }
@@ -75,7 +81,7 @@ public class GuildManager {
         Guild guild = TridentGuild.getSqlHandler().getGuild(guildUUID);
         if(guild == null) return;
         loadedGuilds.put(guildUUID,guild);
-        guildNames.add(guild.getGuildName());
+        guildNames.add(guild.getGuildName().toLowerCase());
     }
     public boolean hasGuild(String playerName){
         if(Bukkit.getServer().getOnlinePlayers().contains(Bukkit.getPlayerExact(playerName))){
@@ -97,13 +103,13 @@ public class GuildManager {
         guild.makeOwner(playerName);
         loadedGuilds.put(uuid,guild);
         onlinePlayerGuilds.put(playerName,uuid);
-        guildNames.add(guildName);
+        guildNames.add(guildName.toLowerCase());
         TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
         TridentGuild.getGuildManager().syncToSqlGuild(guild, SyncType.UPDATE);
     }
     public void removeGuild(UUID uuid){
         Guild guild = loadedGuilds.get(uuid);
-        guildNames.remove(guild.getGuildName());
+        guildNames.remove(guild.getGuildName().toLowerCase());
         guild.guildMembers.forEach((name,gMember)->{
             onlinePlayerGuilds.remove(name);
         });
@@ -124,7 +130,9 @@ public class GuildManager {
                 guild.serializePatterns(),
                 Guild.serializeMemberPerms(guild.getMemberPerms()),
                 Guild.serializeOpPerms(guild.getOperatorPerms()),
-                guild.getBannerMaterial().toString());
+                guild.getBannerMaterial().toString(),
+                guild.getCreateDate(),
+                guild.isPvp());
         loadedGuilds.remove(guildUUID);
     }
     public void saveGuild(UUID guildUUID){
@@ -140,7 +148,9 @@ public class GuildManager {
                 guild.serializePatterns(),
                 Guild.serializeMemberPerms(guild.getMemberPerms()),
                 Guild.serializeOpPerms(guild.getOperatorPerms()),
-                guild.getBannerMaterial().toString());
+                guild.getBannerMaterial().toString(),
+                guild.getCreateDate(),
+                guild.isPvp());
     }
     public void unloadAllGuilds(){
         loadedGuilds.forEach((uuid, guild) -> {

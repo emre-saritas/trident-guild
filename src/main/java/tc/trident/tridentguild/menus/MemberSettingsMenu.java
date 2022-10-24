@@ -37,12 +37,12 @@ public class MemberSettingsMenu implements InventoryProvider {
                 player.closeInventory();
                 return;
             }
+            if(guild.getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
+                Utils.sendError(player,"no-perm");
+                player.closeInventory();
+                return;
+            }
            if(inventoryClickEvent.isLeftClick()){
-               if(member.getPermission()!= GuildMember.GuildPermission.MEMBER){
-                   Utils.sendError(player,"cant-do");
-                   player.closeInventory();
-                   return;
-               }
                member.setPermission(GuildMember.GuildPermission.OPERATOR);
                TridentGuild.getGuildManager().syncToSqlGuildMember(member,guild.getGuildUUID(), SyncType.UPDATE);
                TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
@@ -50,11 +50,6 @@ public class MemberSettingsMenu implements InventoryProvider {
                player.sendMessage(Utils.addColors(Utils.getMessage("member-rank-up",true).replace("%player%", member.getPlayer().getName())));
                player.closeInventory();
            } else if (inventoryClickEvent.isRightClick()) {
-               if(member.getPermission()!= GuildMember.GuildPermission.OPERATOR){
-                   Utils.sendError(player,"cant-do");
-                   player.closeInventory();
-                   return;
-               }
                member.setPermission(GuildMember.GuildPermission.MEMBER);
                TridentGuild.getGuildManager().syncToSqlGuildMember(member,guild.getGuildUUID(), SyncType.UPDATE);
                TridentGuild.getSyncManager().syncGuild(guild,SyncType.UPDATE);
@@ -73,22 +68,10 @@ public class MemberSettingsMenu implements InventoryProvider {
                 player.closeInventory();
                 return;
             }
-            if(member.getPermission() == GuildMember.GuildPermission.OWNER){
+            if(!hasPermission("guild.kick",guild.getGuildMember(player.getName()).getPermission(),guild) || member.getPermission() == GuildMember.GuildPermission.OWNER){
                 Utils.sendError(player,"no-perm");
                 player.closeInventory();
                 return;
-            }
-            if(guild.getGuildMember(player.getName()).getPermission() == GuildMember.GuildPermission.OPERATOR){
-                if(!guild.operatorPerms.get("guild.kick")){
-                    Utils.sendError(player,"no-perm");
-                    player.closeInventory();
-                    return;
-                }
-                if(member.getPermission() != GuildMember.GuildPermission.MEMBER){
-                    Utils.sendError(player,"no-perm");
-                    player.closeInventory();
-                    return;
-                }
             }
             guild.removeGuildMember(member.getPlayer().getName());
             player.sendMessage(Utils.addColors(Utils.getMessage("member-kicked",true)));
@@ -107,7 +90,15 @@ public class MemberSettingsMenu implements InventoryProvider {
                 .build();
         INVENTORY.open(player); //    Opens the menu
     }
-
+    public boolean hasPermission(String tag, GuildMember.GuildPermission permission, Guild guild){
+        if(permission == GuildMember.GuildPermission.OWNER) return true;
+        if(permission == GuildMember.GuildPermission.MEMBER) return false;
+        if(!guild.operatorPerms.get(tag)){
+            return false;
+        }else{
+            return true;
+        }
+    }
     public void update(Player player, InventoryContents inventoryContents) {
 
     }
