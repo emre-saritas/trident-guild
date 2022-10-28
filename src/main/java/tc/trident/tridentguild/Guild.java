@@ -67,13 +67,14 @@ public class Guild {
 
     public int getTotalGuildPoints(){
         int points = 0;
-        for(String playerName : guildMembers.keySet()){
-            points += getMemberPoint(playerName);
+        Utils.debug(points+"");
+        for(GuildMember member : guildMembers.values()){
+            if(TridentSync.getInstance().getPlayerListManager().getOnlinePlayers().contains(member.getPlayer().getName()))
+                member.syncPoints();
+            points += member.getPoints();
         }
+        Utils.debug(points+"");
         return points;
-    }
-    public static int getMemberPoint(String playerName){
-        return TridentJobsMain.getPlayerManager().getMasteryLvl(playerName);
     }
     public static String serializeOpPerms(HashMap<String, Boolean> perms){
         return "" + perms.get("guild.invite") + ";" +

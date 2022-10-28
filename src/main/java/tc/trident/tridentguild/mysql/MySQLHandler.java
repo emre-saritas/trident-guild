@@ -71,11 +71,11 @@ public class MySQLHandler {
             var24.printStackTrace();
         }
     }
-    public void updateGuildMember(String playerName, String guildUUID, String permission, float totalDonate){
+    public void updateGuildMember(String playerName, String guildUUID, String permission, float totalDonate, int points){
         Connection conn = this.sql.getConnection();
 
         try {
-            PreparedStatement st = conn.prepareStatement("REPLACE INTO survival_GuildMember SET `playerName` = ? , `guildUUID` = ? , `permission` = ? , `totalDonate` = ?");
+            PreparedStatement st = conn.prepareStatement("REPLACE INTO survival_GuildMember SET `playerName` = ? , `guildUUID` = ? , `permission` = ? , `totalDonate` = ?, `points` = ?");
             Throwable var12 = null;
 
             try {
@@ -83,6 +83,7 @@ public class MySQLHandler {
                 st.setString(2, guildUUID);
                 st.setString(3, permission);
                 st.setFloat(4, totalDonate);
+                st.setInt(5, points);
                 st.executeUpdate();
                 Utils.debug("[TridentGuild] MySQL updated member "+playerName);
             } catch (Throwable var22) {
@@ -289,7 +290,8 @@ public class MySQLHandler {
             while(result.next()){
                 members.add(new GuildMember(result.getString("playerName"),
                         GuildMember.GuildPermission.valueOf(result.getString("permission")),
-                        result.getInt("totalDonate")));
+                        result.getInt("totalDonate"),
+                        result.getInt("points")));
             }
         } catch (SQLException var7) {
             var7.printStackTrace();

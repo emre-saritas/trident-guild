@@ -1,5 +1,8 @@
 package tc.trident.tridentguild.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_16_R3.NBTTagCompound;
 import org.bukkit.Bukkit;
@@ -134,6 +137,23 @@ public class Utils {
     public static void sendHelpMessages(Player player){
         for(String message : TridentGuild.messages.getStringList("help")){
             player.sendMessage(Utils.addColors(message));
+        }
+    }
+
+    public static Map<String,String> getJsonStringAsMap(String jsonString){
+        try {
+            if(jsonString == null){
+                return new HashMap<>();
+            }
+            ObjectMapper mapper = new ObjectMapper();
+            TypeReference<HashMap<String,String>> typeRef
+                    = new TypeReference<HashMap<String,String>>() {};
+
+            HashMap<String,String> o = mapper.readValue(jsonString, typeRef);
+            return o;
+        }
+        catch (JsonProcessingException ignored){
+            return new HashMap<>();
         }
     }
     public static void debug(String debugMessage){

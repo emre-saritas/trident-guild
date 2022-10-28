@@ -64,10 +64,10 @@ public class GuildPlaceholders extends PlaceholderExpansion {
             return Utils.nf.format(TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getTotalGuildPoints());
         }else if(identifier.equalsIgnoreCase("points_flat")){
             if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
-                return "---";
+                return 0+"";
             }
             if(TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
-                return "---";
+                return 0+"";
             }
             return Utils.nf.format(TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getTotalGuildPoints());
         }

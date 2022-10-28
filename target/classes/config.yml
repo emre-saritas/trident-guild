@@ -5,6 +5,13 @@ banner-change-price: 5000
 banner-price: 1000
 guild-name-length: 15
 
+
+guild-points:
+  0:
+    color-tag: "&7"
+  10:
+    color-tag: "&2"
+
 guild-scroll:
   glow: true
   name: "&dLonca Parşomeni"

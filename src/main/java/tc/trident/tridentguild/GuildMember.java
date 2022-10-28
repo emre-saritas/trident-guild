@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.YamlItem;
+import tc.trident.tridentjobs.TridentJobsMain;
 
 public class GuildMember {
 
@@ -13,6 +14,7 @@ public class GuildMember {
     private OfflinePlayer player;
     private GuildPermission permission;
     private float totalDonate = 0;
+    private int points = 0;
 
     public GuildMember(String playerName){
         this.player = Bukkit.getOfflinePlayer(playerName);
@@ -22,14 +24,12 @@ public class GuildMember {
         this.player = Bukkit.getOfflinePlayer(playerName);
         this.permission = perm;
     }
-    public GuildMember(String playerName, GuildPermission perm, int totalDonate){
+    public GuildMember(String playerName, GuildPermission perm, int totalDonate, int points){
         this.player = Bukkit.getOfflinePlayer(playerName);
         this.permission = perm;
         this.totalDonate = totalDonate;
+        this.points = points;
     }
-
-
-
     public ItemStack getMemberShowItem(){
         YamlItem item = new YamlItem("members.member",TridentGuild.menus);
         item.setName(item.getName().replace("%name%",player.getName()).replace("%colorcode%",permission.colorCode));
@@ -60,7 +60,12 @@ public class GuildMember {
     public void makeMember(){
         this.permission=GuildPermission.MEMBER;
     }
-
+    public int getPoints() {
+        return points;
+    }
+    public void syncPoints(){
+        this.points = TridentJobsMain.getPlayerManager().getMasteryLvl(player.getName());
+    }
     public float getTotalDonate() {
         return totalDonate;
     }

@@ -53,7 +53,8 @@ public class GuildManager {
             TridentGuild.getSqlHandler().updateGuildMember(member.getPlayer().getName(),
                     guildUUID.toString(),
                     member.getPermission().toString(),
-                    member.getTotalDonate());
+                    member.getTotalDonate(),
+                    member.getPoints());
         }else if(updateType == SyncType.REMOVE_PLAYER){
             TridentGuild.getSqlHandler().deleteGuildMember(member.getPlayer().getName());
         }
@@ -134,6 +135,13 @@ public class GuildManager {
                 guild.getCreateDate(),
                 guild.isPvp());
         loadedGuilds.remove(guildUUID);
+    }
+    public void unloadGuildMember(GuildMember member, UUID uuid){
+        TridentGuild.getSqlHandler().updateGuildMember(member.getPlayer().getName(),
+                uuid.toString(),
+                member.getPermission().toString(),
+                member.getTotalDonate(),
+                member.getPoints());
     }
     public void saveGuild(UUID guildUUID){
         Guild guild = loadedGuilds.get(guildUUID);
