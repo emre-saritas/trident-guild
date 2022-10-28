@@ -95,11 +95,6 @@ public class GuildCmds implements CommandExecutor {
                         Utils.sendError(player, "you-not-guild-member");
                         return true;
                     }
-                    Guild guild = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
-                    if (guild.getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER) {
-                        Utils.sendError(player, "not-owner");
-                        return true;
-                    }
                     SettingsMenu.openMenu(player);
                 } else if (args[0].equalsIgnoreCase("sil")) {
                     if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {

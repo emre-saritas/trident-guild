@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="trident-guild:jar">
+    <output-path>$PROJECT_DIR$/../../Pluginns</output-path>
+    <root id="archive" name="trident-guild.jar">
+      <element id="module-output" name="trident-guild" />
+    </root>
+  </artifact>
+</component>

@@ -73,7 +73,7 @@ public class Guild {
         return points;
     }
     public static int getMemberPoint(String playerName){
-        return TridentJobsMain.getPlayerManager().calculateMasteryRank(playerName);
+        return TridentJobsMain.getPlayerManager().getMasteryLvl(playerName);
     }
     public static String serializeOpPerms(HashMap<String, Boolean> perms){
         return "" + perms.get("guild.invite") + ";" +
@@ -94,6 +94,19 @@ public class Guild {
         map.put("guild.levelup",Boolean.valueOf(bools[3]));
         map.put("guild.upgrade",Boolean.valueOf(bools[4]));
         return map;
+    }
+    public String getColoredGuildName(){
+        int points = getTotalGuildPoints();
+        String pointSection = "0";
+        Iterator var4 = TridentGuild.config.getConfigurationSection("guild-points").getKeys(false).iterator();
+
+        while(var4.hasNext()) {
+            String tempPointSection = (String)var4.next();
+            if (Integer.parseInt(tempPointSection) <= points) {
+                pointSection = tempPointSection;
+            }
+        }
+        return Utils.addColors(TridentGuild.config.getString("guild-points."+pointSection+".color-tag")+guildName);
     }
     public static HashMap<String, Boolean> deserializeMemberPerms(String str){
         HashMap<String, Boolean> map = new HashMap<>();

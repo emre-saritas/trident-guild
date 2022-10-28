@@ -11,6 +11,7 @@ general-guild:
       - "&eÜye Sayısı: %count%"
       - "&eÜye Sınırı: %limit%"
       - "&eBanka: %money%"
+      - "&eLonca puanı: %points%"
       - "&eOluşturulma Tarihi: %since%"
       - ""
   1:

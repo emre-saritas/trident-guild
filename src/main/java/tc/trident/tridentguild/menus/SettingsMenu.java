@@ -39,40 +39,52 @@ public class SettingsMenu implements InventoryProvider {
         banner.setItemMeta(meta);
 
         contents.set(1,1, ClickableItem.of(banner,inventoryClickEvent -> {
-            Guild guildClick = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
             if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
                 Utils.sendError(player, "you-not-guild-member");
                 return;
             }
-            ItemStack newBanner = player.getInventory().getItemInMainHand();
-            if(newBanner.getType().toString().contains("BANNER") && !newBanner.getType().toString().contains("BANNER_PATTERN")){
-                if(guild.getGuildMember(player.getName()).getPermission() == GuildMember.GuildPermission.MEMBER){
-                    Utils.sendError(player,"no-perm");
+            Guild guildClick = TridentGuild.getGuildManager().getPlayerGuild(player.getName());
+            if(inventoryClickEvent.isRightClick()){
+                ItemStack newBanner = player.getInventory().getItemInMainHand();
+                if(newBanner.getType().toString().contains("BANNER") && !newBanner.getType().toString().contains("BANNER_PATTERN")){
+                    if(guild.getGuildMember(player.getName()).getPermission() == GuildMember.GuildPermission.MEMBER){
+                        Utils.sendError(player,"no-perm");
+                        player.closeInventory();
+                        return;
+                    }
+                    if(!hasPermission("guild.bannerchange",guild.getGuildMember(player.getName()).getPermission(),guild)){
+                        Utils.sendError(player,"no-perm");
+                        player.closeInventory();
+                        return;
+                    }
+                    if(guildClick.getBalance()<TridentGuild.config.getInt("banner-change-price")){
+                        Utils.sendError(player,"banner-error-money");
+                        player.closeInventory();
+                        return;
+                    }
+                    BannerMeta newMeta = (BannerMeta) newBanner.getItemMeta().clone();
+                    guildClick.setBalance(guildClick.getBalance()-TridentGuild.config.getInt("banner-change-price"));
+                    guildClick.setBannerPatterns(newMeta);
+                    guildClick.setBannerMaterial(newBanner.getType());
+                    TridentGuild.getSyncManager().syncGuild(guildClick,SyncType.UPDATE);
+                    TridentGuild.getGuildManager().syncToSqlGuild(guildClick, SyncType.UPDATE);
+                    player.sendMessage(Utils.addColors(Utils.getMessage("banner-set",true)));
                     player.closeInventory();
+                }else{
+                    Utils.sendError(player,"banner-error");
+                    player.closeInventory();
+                }
+            }else if(inventoryClickEvent.isLeftClick()){
+                int bannerPrice = TridentGuild.config.getInt("banner-price");
+                if(TridentGuild.getEcon().getBalance(player) < bannerPrice){
+                    player.sendMessage(Utils.addColors(Utils.getMessage("banner-price-error",true).replace("%price%",Utils.nf.format(bannerPrice)+"$")));
                     return;
                 }
-                if(!hasPermission("guild.bannerchange",guild.getGuildMember(player.getName()).getPermission(),guild)){
-                    Utils.sendError(player,"no-perm");
-                    player.closeInventory();
-                    return;
-                }
-                if(guildClick.getBalance()<TridentGuild.config.getInt("banner-change-price")){
-                    Utils.sendError(player,"banner-error-money");
-                    player.closeInventory();
-                    return;
-                }
-                BannerMeta newMeta = (BannerMeta) newBanner.getItemMeta().clone();
-                guildClick.setBalance(guildClick.getBalance()-TridentGuild.config.getInt("banner-change-price"));
-                guildClick.setBannerPatterns(newMeta);
-                guildClick.setBannerMaterial(newBanner.getType());
-                TridentGuild.getSyncManager().syncGuild(guildClick,SyncType.UPDATE);
-                TridentGuild.getGuildManager().syncToSqlGuild(guildClick, SyncType.UPDATE);
-                player.sendMessage(Utils.addColors(Utils.getMessage("banner-set",true)));
-                player.closeInventory();
-            }else{
-                Utils.sendError(player,"banner-error");
-                player.closeInventory();
+                TridentGuild.getEcon().withdrawPlayer(player,bannerPrice);
+                player.getInventory().addItem(guildClick.getGuildBanner().clone());
+                player.sendMessage(Utils.addColors(Utils.getMessage("banner-purchase",true)));
             }
+
         }));
         item = new YamlItem("settings.1",TridentGuild.menus);
         contents.set(1,3,ClickableItem.of(item.complete(),inventoryClickEvent -> {

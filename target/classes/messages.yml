@@ -42,6 +42,8 @@ banner-error-money: "&cLoncada yeterli para olmadığı için flama değiştiril
 cant-hit-guild-member: "&cLonca arkadaşına vuramazsın."
 pvp-change: "&7PvP ayarı %state%&7 olarak değiştirildi."
 soon: "&cÇok yakında!"
+banner-price-error: "&cLonca flaması almak için yeterli paranız bulunmamaktadır. &e%price%"
+banner-purchase: "&7Lonca flaması satın aldınız."
 
 help:
   - "&e/lonca - Genel lonca menüsünü açar"

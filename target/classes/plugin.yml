@@ -16,4 +16,4 @@ commands:
     description: lmsg
     usage: /lmsg
 
-depend: [TridentSync, helper, helper-redis]
+depend: [TridentSync, TridentJobs, helper, helper-redis]
