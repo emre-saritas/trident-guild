@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.utils.Utils;

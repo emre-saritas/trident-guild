@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 import tc.trident.sync.TridentSync;
 import tc.trident.tridentguild.mysql.SyncType;
 import tc.trident.tridentguild.utils.Utils;
+import tc.trident.tridentjobs.TridentJobsMain;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -64,7 +65,16 @@ public class Guild {
     }
 
 
-
+    public int getTotalGuildPoints(){
+        int points = 0;
+        for(String playerName : guildMembers.keySet()){
+            points += getMemberPoint(playerName);
+        }
+        return points;
+    }
+    public static int getMemberPoint(String playerName){
+        return TridentJobsMain.getPlayerManager().calculateMasteryRank(playerName);
+    }
     public static String serializeOpPerms(HashMap<String, Boolean> perms){
         return "" + perms.get("guild.invite") + ";" +
                 perms.get("guild.kick") + ";" +
