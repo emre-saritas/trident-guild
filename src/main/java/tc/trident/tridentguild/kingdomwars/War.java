@@ -41,6 +41,11 @@ public class War {
         this.mainTask = new TimerTask() {
             @Override
             public void run() {
+                /**
+                 * beacon kodları baştan yaz
+                 * beaconı kontrol etsin
+                 * oyuncu çokluğunda animasyonla birlikte capture edilsin
+                 */
                 if(beaconGuild0 != calculateOwnershipOfBeacon(0)){
                     beaconGuild0 = calculateOwnershipOfBeacon(0);
                     // start animation
@@ -55,6 +60,9 @@ public class War {
     public void finish(){
         stop();
         Timer timer = new Timer ();
+        /**
+         * listenerlar durdurulmalı
+         */
         this.finishTask = new TimerTask() {
             @Override
             public void run() {
@@ -66,7 +74,7 @@ public class War {
                 }
             }
         };
-        timer.schedule (mainTask, 0l, 1000);
+        timer.schedule (finishTask, 0l, 1000);
     }
 
     public void stop(){

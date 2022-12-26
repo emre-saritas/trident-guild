@@ -25,6 +25,11 @@ public class WarManager {
 
         this.serverType=type;
         start();
+        /**
+         * değişecek
+         * sadece hub sunucusunda gerçekleşecek
+         * data savaş sunucularına gönderilecek
+         */
     }
 
     public void start(){

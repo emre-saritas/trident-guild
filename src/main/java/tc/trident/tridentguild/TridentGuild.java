@@ -31,7 +31,6 @@ public class TridentGuild extends ExtendedJavaPlugin {
     private static SyncManager syncManager;
     private static InviteHandler inviteHandler;
     private RedisListeners redisListeners;
-    private static LeaderboardPlugin leaderboardPlugin;
 
     @Override
     public void enable() {
@@ -61,9 +60,6 @@ public class TridentGuild extends ExtendedJavaPlugin {
             }
             if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 new GuildPlaceholders().register();
-            }
-            if(Bukkit.getPluginManager().getPlugin("ajLeaderboards") != null){
-                leaderboardPlugin = LeaderboardPlugin.getPlugin(LeaderboardPlugin.class);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -96,9 +92,6 @@ public class TridentGuild extends ExtendedJavaPlugin {
 
     public static WarManager getWarManager() {
         return warManager;
-    }
-    public static LeaderboardPlugin getLeaderboardPlugin() {
-        return leaderboardPlugin;
     }
     public static InviteHandler getInviteHandler() {
         return inviteHandler;
