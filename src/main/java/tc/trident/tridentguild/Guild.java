@@ -67,13 +67,11 @@ public class Guild {
 
     public int getTotalGuildPoints(){
         int points = 0;
-        Utils.debug(points+"");
         for(GuildMember member : guildMembers.values()){
             if(TridentSync.getInstance().getPlayerListManager().getOnlinePlayers().contains(member.getPlayer().getName()))
                 member.syncPoints();
             points += member.getPoints();
         }
-        Utils.debug(points+"");
         return points;
     }
     public static String serializeOpPerms(HashMap<String, Boolean> perms){
@@ -140,6 +138,17 @@ public class Guild {
         });
     }
     public ItemStack getGuildBanner(){
+        ItemStack banner = new ItemStack(bannerMaterial);
+        if(patterns.size() == 0) return banner;
+        BannerMeta meta = (BannerMeta) banner.getItemMeta();
+        patterns.forEach((patternType, dyeColor) -> {
+            meta.addPattern(new Pattern(dyeColor,patternType));
+        });
+        banner.setItemMeta(meta);
+        return banner;
+    }
+    public static ItemStack getGuildBanner(Material bannerMaterial, String patternStr){
+        HashMap<PatternType,DyeColor> patterns = new HashMap<>(Guild.deserializePatterns(patternStr));
         ItemStack banner = new ItemStack(bannerMaterial);
         if(patterns.size() == 0) return banner;
         BannerMeta meta = (BannerMeta) banner.getItemMeta();

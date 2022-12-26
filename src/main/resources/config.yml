@@ -12,6 +12,12 @@ guild-points:
   10:
     color-tag: "&2"
 
+banner-locations:
+  world: WORLD
+  leaderboard:
+    1:
+      loc: X,Y,Z
+
 guild-scroll:
   glow: true
   name: "&dLonca Parşomeni"

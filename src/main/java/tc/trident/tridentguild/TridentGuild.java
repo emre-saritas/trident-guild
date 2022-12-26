@@ -13,20 +13,25 @@ import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
 import tc.trident.tridentguild.cmds.GuildCmds;
 import tc.trident.tridentguild.invite.InviteHandler;
+import tc.trident.tridentguild.kingdomwars.WarManager;
 import tc.trident.tridentguild.listeners.PlayerServerListeners;
 import tc.trident.tridentguild.listeners.RedisListeners;
 import tc.trident.tridentguild.mysql.*;
+import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.Yaml;
+import us.ajg0702.leaderboards.LeaderboardPlugin;
 
 public class TridentGuild extends ExtendedJavaPlugin {
-    public static Yaml config,messages,menus,upgrades,redis;
+    public static Yaml config,messages,menus,upgrades,redis,kingdomwar;
     private static TridentGuild instance;
     private static MySQLManager sqlManager;
     private static Economy econ;
     private static GuildManager guildManager;
+    private static WarManager warManager;
     private static SyncManager syncManager;
     private static InviteHandler inviteHandler;
     private RedisListeners redisListeners;
+    private static LeaderboardPlugin leaderboardPlugin;
 
     @Override
     public void enable() {
@@ -36,12 +41,15 @@ public class TridentGuild extends ExtendedJavaPlugin {
         menus = new Yaml(getDataFolder() + "/menus.yml", "menus.yml");
         upgrades = new Yaml(getDataFolder() + "/upgrades.yml", "upgrades.yml");
         redis = new Yaml(getDataFolder() + "/redis.yml", "redis.yml");
-
+        kingdomwar = new Yaml(getDataFolder() + "/kingdomwar.yml", "kingdomwar.yml");
         try{
             syncManager = new SyncManager();
             sqlManager = new MySQLManager(this);
             guildManager = new GuildManager();
             inviteHandler = new InviteHandler();
+            if(kingdomwar.getBoolean("war-manager-active")){
+                warManager = new WarManager(WarManager.ServerType.valueOf(kingdomwar.getString("server-type")));
+            }
             Bukkit.getPluginManager().registerEvents(new PlayerServerListeners(),this);
             redisListeners = new RedisListeners();
             Bukkit.getPluginManager().registerEvents(redisListeners,this);
@@ -54,6 +62,9 @@ public class TridentGuild extends ExtendedJavaPlugin {
             if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 new GuildPlaceholders().register();
             }
+            if(Bukkit.getPluginManager().getPlugin("ajLeaderboards") != null){
+                leaderboardPlugin = LeaderboardPlugin.getPlugin(LeaderboardPlugin.class);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -64,6 +75,9 @@ public class TridentGuild extends ExtendedJavaPlugin {
     protected void disable() {
         if(redisListeners != null)
             redisListeners.close();
+        if(warManager != null){
+            warManager.close();
+        }
         guildManager.unloadAllGuilds();
     }
 
@@ -79,6 +93,13 @@ public class TridentGuild extends ExtendedJavaPlugin {
         return econ != null;
     }
 
+
+    public static WarManager getWarManager() {
+        return warManager;
+    }
+    public static LeaderboardPlugin getLeaderboardPlugin() {
+        return leaderboardPlugin;
+    }
     public static InviteHandler getInviteHandler() {
         return inviteHandler;
     }

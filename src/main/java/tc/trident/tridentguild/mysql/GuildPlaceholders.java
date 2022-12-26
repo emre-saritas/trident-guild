@@ -32,7 +32,7 @@ public class GuildPlaceholders extends PlaceholderExpansion {
                 return "---";
             }
             return TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getGuildName();
-        }if(identifier.equalsIgnoreCase("name_colored")){
+        }else if(identifier.equalsIgnoreCase("name_colored")){
             if (!TridentGuild.getGuildManager().hasGuild(player.getName())) {
                 return "---";
             }
@@ -69,7 +69,7 @@ public class GuildPlaceholders extends PlaceholderExpansion {
             if(TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getGuildMember(player.getName()).getPermission() != GuildMember.GuildPermission.OWNER){
                 return 0+"";
             }
-            return Utils.nf.format(TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getTotalGuildPoints());
+            return TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getTotalGuildPoints()+"";
         }
         return null;
     }

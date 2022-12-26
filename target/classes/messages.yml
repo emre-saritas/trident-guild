@@ -45,6 +45,14 @@ soon: "&cÇok yakında!"
 banner-price-error: "&cLonca flaması almak için yeterli paranız bulunmamaktadır. &e%price%"
 banner-purchase: "&7Lonca flaması satın aldınız."
 
+# War messages
+general:
+  winner-guild: "&eLonca Savaşı sona erdi! Kazanan Lonca: &a%guild-name%"
+error:
+  war-is-full: "&cSavaş'a en fazla 5 lonca üyesi girebilir."
+  not-started: "&cSavaş henüz başlamadı."
+  not-war-guild-member: "&cSavaşa dahil bir lonca üyesi değilsiniz."
+
 help:
   - "&e/lonca - Genel lonca menüsünü açar"
   - "&e/lonca oluştur/aç <lonca ismi> - Lonca oluşturur"

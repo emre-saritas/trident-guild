@@ -13,6 +13,9 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.bukkit.Material;
+import org.bukkit.block.Banner;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.GuildMember;
 import tc.trident.tridentguild.TridentGuild;
@@ -298,5 +301,21 @@ public class MySQLHandler {
         }
 
         return members;
+    }
+    public ItemStack getGuildBanner(String playerName){
+        ItemStack meta = null;
+        Connection conn = this.sql.getConnection();
+        try {
+            PreparedStatement st = conn.prepareStatement("SELECT * FROM survival_Guild WHERE uuid=?");
+            st.setString(1, getGuildUUID(playerName).toString());
+            ResultSet result = st.executeQuery();
+            if(result.next()){
+                meta = Guild.getGuildBanner(Material.valueOf(result.getString("bannerMaterial")),result.getString("bannerPatterns"));
+            }
+        } catch (SQLException var7) {
+            var7.printStackTrace();
+        }
+
+        return meta;
     }
 }

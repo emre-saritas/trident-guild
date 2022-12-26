@@ -216,6 +216,9 @@ public class GuildCmds implements CommandExecutor {
                         Utils.sendError(player, "number-error");
                         return true;
                     }
+                    if(TridentGuild.getEcon().getBalance(player)<amount){
+                        return true;
+                    }
                     TridentGuild.getEcon().withdrawPlayer(player, amount);
                     guild.setBalance(guild.getBalance() + (float) amount);
                     GuildMember guildMember = guild.getGuildMember(player.getName());
