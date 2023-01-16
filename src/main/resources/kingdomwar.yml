@@ -1,14 +1,13 @@
 
 world: WORLD
 
-war-manager-active: false
-server-type: WAR    # HUB or WAR
-
 player-limit: 5
 kill-point: 2
 beacon-point-per-second: 1
+war-length: 30      # mins
 
-beacons:
-  0:
-    point-1: X,Y,Z
-    point-2: X,Y,Z
+
+temp-spawn-point: X,Y,Z
+beacon:
+  point-1: X,Y,Z
+  point-2: X,Y,Z

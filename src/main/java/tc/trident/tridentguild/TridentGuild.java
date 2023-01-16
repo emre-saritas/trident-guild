@@ -5,10 +5,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.RegisteredServiceProvider;
-import org.bukkit.plugin.java.JavaPlugin;
-import tc.trident.sync.TridentSync;
-import tc.trident.sync.sync.SyncBlockListeners;
-import tc.trident.sync.sync.SyncListeners;
 import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
 import tc.trident.tridentguild.cmds.GuildCmds;
@@ -17,9 +13,7 @@ import tc.trident.tridentguild.kingdomwars.WarManager;
 import tc.trident.tridentguild.listeners.PlayerServerListeners;
 import tc.trident.tridentguild.listeners.RedisListeners;
 import tc.trident.tridentguild.mysql.*;
-import tc.trident.tridentguild.utils.Utils;
 import tc.trident.tridentguild.utils.Yaml;
-import us.ajg0702.leaderboards.LeaderboardPlugin;
 
 public class TridentGuild extends ExtendedJavaPlugin {
     public static Yaml config,messages,menus,upgrades,redis,kingdomwar;
@@ -46,9 +40,7 @@ public class TridentGuild extends ExtendedJavaPlugin {
             sqlManager = new MySQLManager(this);
             guildManager = new GuildManager();
             inviteHandler = new InviteHandler();
-            if(kingdomwar.getBoolean("war-manager-active")){
-                warManager = new WarManager(WarManager.ServerType.valueOf(kingdomwar.getString("server-type")));
-            }
+            warManager = new WarManager();
             Bukkit.getPluginManager().registerEvents(new PlayerServerListeners(),this);
             redisListeners = new RedisListeners();
             Bukkit.getPluginManager().registerEvents(redisListeners,this);
@@ -71,9 +63,6 @@ public class TridentGuild extends ExtendedJavaPlugin {
     protected void disable() {
         if(redisListeners != null)
             redisListeners.close();
-        if(warManager != null){
-            warManager.close();
-        }
         guildManager.unloadAllGuilds();
     }
 
