@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.json.simple.JSONObject;
 import tc.trident.sync.TridentSync;
+import tc.trident.sync.server.ServerType;
 import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.invite.InviteRedisData;

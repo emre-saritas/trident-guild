@@ -57,9 +57,9 @@ public class Utils {
 
     }
 
-    public static Map<String, Double> sortByValue(Map<String, Double> unsortMap, final boolean order)
+    public static Map<UUID, Integer> sortByValue(Map<UUID, Integer> unsortMap, final boolean order)
     {
-        List<Map.Entry<String, Double>> list = new LinkedList<>(unsortMap.entrySet());
+        List<Map.Entry<UUID, Integer>> list = new LinkedList<>(unsortMap.entrySet());
 
         // Sorting the list based on values
         list.sort((o1, o2) -> order ? o1.getValue().compareTo(o2.getValue()) == 0
