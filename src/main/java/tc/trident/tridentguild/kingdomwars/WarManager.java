@@ -4,12 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import tc.trident.sync.TridentSync;
 import tc.trident.sync.server.Server;
 import tc.trident.sync.server.ServerType;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.utils.Utils;
 
 public class WarManager {
@@ -29,6 +31,7 @@ public class WarManager {
 
         // if server is war server then it checks
         if(type == ServerType.DUNGEON){
+            TridentGuild.getInstance().getCommand("tridentwar").setExecutor((CommandExecutor) new WarCommands());
             main = mainRun.runTaskTimerAsynchronously(TridentSync.getInstance(),10,10);
         }
     }
@@ -54,6 +57,11 @@ public class WarManager {
     public boolean isWarStarted(){
         return war != null;
     }
+
+    public War getWar() {
+        return war;
+    }
+
     public void startWar(){
         war = new War();
     }

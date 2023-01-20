@@ -5,11 +5,14 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import tc.trident.sync.TridentSync;
+import tc.trident.sync.server.ServerType;
 import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
 import tc.trident.tridentguild.cmds.GuildCmds;
 import tc.trident.tridentguild.invite.InviteHandler;
 import tc.trident.tridentguild.kingdomwars.WarManager;
+import tc.trident.tridentguild.kingdomwars.WarPlaceholders;
 import tc.trident.tridentguild.listeners.PlayerServerListeners;
 import tc.trident.tridentguild.listeners.RedisListeners;
 import tc.trident.tridentguild.mysql.*;
@@ -52,6 +55,8 @@ public class TridentGuild extends ExtendedJavaPlugin {
             }
             if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 new GuildPlaceholders().register();
+                if(TridentSync.SERVER_TYPE == ServerType.DUNGEON)
+                    new WarPlaceholders().register();
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

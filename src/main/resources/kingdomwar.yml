@@ -9,6 +9,10 @@ war-length: 30      # mins
 
 temp-spawn-point: X,Y,Z
 lobby-spawn: X,Y,Z
+spawn-locations:
+  0: X,Y,Z
+  1: X,Y,Z
+
 
 beacon:
   point-1: X,Y,Z

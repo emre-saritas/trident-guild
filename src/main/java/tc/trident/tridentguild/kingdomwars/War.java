@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -17,24 +18,23 @@ import java.util.*;
 
 public class War {
     private World world;
-    private Map<UUID, Integer> guildPoints = new LinkedHashMap<>();
-    private HashMap<String, UUID> playerGuilds = new HashMap<>();
+    public Map<UUID, Integer> guildPoints = new LinkedHashMap<>();
+    public HashMap<String, UUID> playerGuilds = new HashMap<>();
     private HashMap<String, WarPlayerData> playerWarDatas = new HashMap<>();
     private WarState state = WarState.PLAYING;
     private BukkitTask main;
-    private final int KILL_POINTS = TridentGuild.kingdomwar.getInt("kill-point");
-    private final int BEACON_POINTS = TridentGuild.kingdomwar.getInt("beacon-point-per-second");
+    private Beacon beacon;
+    public final int KILL_POINTS = TridentGuild.kingdomwar.getInt("kill-point");
+    public final int BEACON_POINTS = TridentGuild.kingdomwar.getInt("beacon-point-per-second");
     private long endTime;
-    private Location tempSpawnPoint;
 
 
     public War(){
         world = null;
         endTime = System.currentTimeMillis() + (long) TridentGuild.kingdomwar.getInt("war-length") *60*1000;
-        tempSpawnPoint = Utils.getLocationFromString(TridentGuild.kingdomwar.getString("temp-spawn-point"),world);
         TridentGuild.getWarManager().getBossBar().setTitle(Utils.addColors(TridentGuild.messages.getString("bossbar.war-time").replace("%time%",getSecondsLeft()+" saniye")));
         TridentGuild.getWarManager().getBossBar().setColor(BarColor.RED);
-
+        beacon = new Beacon(this);
         main = mainRun.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,10);
     }
 
@@ -47,17 +47,8 @@ public class War {
         public void run() {
             if(getSecondsLeft() <= 0){
                 state = WarState.FINISH;
-                sortGuildsByPoints();
 
-                UUID winnerGuild = null;
-                for(UUID guildUUID : guildPoints.keySet()){
-                    if(winnerGuild == null)
-                        winnerGuild = guildUUID;
-
-                    if(guildPoints.get(guildUUID) > guildPoints.get(winnerGuild))
-                        winnerGuild = guildUUID;
-
-                }
+                UUID winnerGuild = getGuildByIndex(0);
 
                 Utils.debug("[TridentGuild] Savaş Sona Erdi. Kazanan Lonca: "+winnerGuild);
                 Utils.debug("[TridentGuild] Puan Durumu:");
@@ -68,8 +59,9 @@ public class War {
                 main.cancel();
                 this.cancel();
 
-                main = finishRun.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,10);
+
                 endTime = System.currentTimeMillis()+30*1000;
+                main = finishRun.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,10);
 
                 TridentGuild.getWarManager().getBossBar().setTitle(Utils.addColors(TridentGuild.messages.getString("bossbar.finish").replace("%time%",(int)(endTime - System.currentTimeMillis())/1000+" saniye")));
                 TridentGuild.getWarManager().getBossBar().setColor(BarColor.YELLOW);
@@ -92,7 +84,18 @@ public class War {
     };
 
 
+    public UUID getGuildByIndex(int index){
+        sortGuildsByPoints();
 
+        UUID guild = null;
+        int i = 0;
+        for(UUID keyGuild : guildPoints.keySet()){
+            if(i==index)
+                guild = keyGuild;
+        }
+
+        return guild;
+    }
     public boolean isGuildLimitReached(UUID guildUUID){
         int count = 0;
         for(String playerName : playerGuilds.keySet()){
@@ -107,8 +110,9 @@ public class War {
         playerWarDatas.get(dead.getName()).incDeaths();
         addPoints(playerGuilds.get(killer.getName()),KILL_POINTS);
         removePlayer(dead);
+        ((LivingEntity) dead).setHealth(20);
     }
-    public void addPlayerToWar(Player player){
+    public void addPlayerToWar(Player player, String spawnID){
         if(!TridentGuild.getGuildManager().hasGuild(player.getName())) return;
         UUID guildUUID = TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getGuildUUID();
         if(!guildPoints.containsKey(TridentGuild.getGuildManager().getPlayerGuild(player.getName())))
@@ -117,12 +121,18 @@ public class War {
             playerWarDatas.put(player.getName(),new WarPlayerData());
         playerGuilds.put(player.getName(), guildUUID);
 
-        player.teleport(tempSpawnPoint);
+        player.teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("spawn-locations."+spawnID),
+                TridentGuild.getWarManager().getWar().getWorld()));
     }
     public void removePlayer(Player player){
         playerGuilds.remove(player);
         player.teleport(Utils.getLocationFromString("lobby-spawn",world));
     }
+
+    public WarState getState() {
+        return state;
+    }
+
     public int getSecondsLeft(){
         return (int) ((endTime - System.currentTimeMillis())/1000);
     }
