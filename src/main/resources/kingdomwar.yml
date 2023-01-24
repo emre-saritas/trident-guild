@@ -1,5 +1,5 @@
 
-world: WORLD
+world: canavarworld
 
 player-limit: 5
 kill-point: 2

@@ -1,5 +1,6 @@
 package tc.trident.tridentguild.kingdomwars;
 
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import tc.trident.tridentguild.TridentGuild;
@@ -11,10 +12,8 @@ import java.util.*;
 public class Beacon {
     private BukkitTask task;
     private Cuboid beaconCube;
-    private final War warInstance;
 
     public Beacon(War warInstance){
-        this.warInstance=warInstance;
         beaconCube = new Cuboid(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("beacon.point-1"),warInstance.getWorld()),
                 Utils.getLocationFromString(TridentGuild.kingdomwar.getString("beacon.point-2"),warInstance.getWorld()));
 
@@ -28,13 +27,13 @@ public class Beacon {
     private BukkitRunnable runnable = new BukkitRunnable(){
         @Override
         public void run() {
-            if(warInstance.getState() == War.WarState.FINISH){
+            if(TridentGuild.getWarManager().getWar().getState() == War.WarState.FINISH){
                 this.cancel();
                 task.cancel();
             }else{
-                UUID owningGuild = getNewOwningGuild();   
+                UUID owningGuild = getNewOwningGuild();
                 if(owningGuild != null){
-                    warInstance.addPoints(owningGuild, warInstance.BEACON_POINTS);
+                    TridentGuild.getWarManager().getWar().addPoints(owningGuild, TridentGuild.getWarManager().getWar().BEACON_POINTS);
                 }
             }
         }
@@ -50,13 +49,17 @@ public class Beacon {
     public UUID getNewOwningGuild() {
         UUID newOwningGuild = null;
         HashMap<UUID, Integer> guildsInBeacon = new HashMap<>();
-        warInstance.playerGuilds.forEach((name,uuid) -> {
-            if(!guildsInBeacon.containsKey(uuid))
-                guildsInBeacon.put(uuid, 0);
-            else
-                guildsInBeacon.replace(uuid, guildsInBeacon.get(uuid)+1);
+
+
+        TridentGuild.getWarManager().getWar().playerGuilds.forEach((name,uuid) -> {
+            if(beaconCube.containsLocation(Bukkit.getPlayerExact(name).getLocation())){
+                if(!guildsInBeacon.containsKey(uuid))
+                    guildsInBeacon.put(uuid, 1);
+                else
+                    guildsInBeacon.replace(uuid, guildsInBeacon.get(uuid)+1);
+            }
         });
-        
+
         int most = 0;
         for(UUID uuid : guildsInBeacon.keySet()){
             if(guildsInBeacon.get(uuid) > most){

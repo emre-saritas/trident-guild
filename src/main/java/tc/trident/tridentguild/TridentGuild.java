@@ -11,6 +11,7 @@ import tc.trident.tridentguild.cmds.AdminCmds;
 import tc.trident.tridentguild.cmds.GuildChatMessage;
 import tc.trident.tridentguild.cmds.GuildCmds;
 import tc.trident.tridentguild.invite.InviteHandler;
+import tc.trident.tridentguild.kingdomwars.WarCommands;
 import tc.trident.tridentguild.kingdomwars.WarManager;
 import tc.trident.tridentguild.kingdomwars.WarPlaceholders;
 import tc.trident.tridentguild.listeners.PlayerServerListeners;
@@ -50,12 +51,13 @@ public class TridentGuild extends ExtendedJavaPlugin {
             this.getCommand("tridentguild").setExecutor((CommandExecutor) new AdminCmds());
             this.getCommand("lonca").setExecutor((CommandExecutor) new GuildCmds());
             this.getCommand("lmsg").setExecutor((CommandExecutor) new GuildChatMessage());
+            this.getCommand("war").setExecutor((CommandExecutor) new WarCommands());
             if (!setupEconomy()) {
                 getServer().getPluginManager().disablePlugin(this);
             }
             if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
                 new GuildPlaceholders().register();
-                if(TridentSync.SERVER_TYPE == ServerType.DUNGEON)
+                if(TridentSync.SERVER_TYPE == ServerType.ARENA)
                     new WarPlaceholders().register();
             }
         } catch (Exception e) {

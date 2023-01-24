@@ -15,6 +15,16 @@ public class WarCommands implements CommandExecutor {
         if(sender instanceof Player){
             Player player = (Player) sender;
             if(args.length == 1){
+                if(player.hasPermission("skyblocktc.admin")){
+                    if(args[0].equalsIgnoreCase("start")){
+                        if(TridentGuild.getWarManager().getWar().getState() != War.WarState.WAITING) return true;
+                        TridentGuild.getWarManager().getWar().changeState(War.WarState.PLAYING);
+                    }else if(args[0].equalsIgnoreCase("finish")){
+                        if(TridentGuild.getWarManager().getWar().getState() != War.WarState.PLAYING) return true;
+                        TridentGuild.getWarManager().getWar().changeState(War.WarState.FINISH);
+                    }
+                }
+
                 if(args[0].equalsIgnoreCase("tp0")){
                     tryEnterWar(player,"0");
                 }

@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitTask;
 import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.utils.Utils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class War {
@@ -21,19 +22,30 @@ public class War {
     public Map<UUID, Integer> guildPoints = new LinkedHashMap<>();
     public HashMap<String, UUID> playerGuilds = new HashMap<>();
     private HashMap<String, WarPlayerData> playerWarDatas = new HashMap<>();
-    private WarState state = WarState.PLAYING;
+    private WarState state = WarState.WAITING;
     private BukkitTask main;
     private Beacon beacon;
+    public BossBar bossBar;
     public final int KILL_POINTS = TridentGuild.kingdomwar.getInt("kill-point");
     public final int BEACON_POINTS = TridentGuild.kingdomwar.getInt("beacon-point-per-second");
     private long endTime;
+    private SimpleDateFormat format = new SimpleDateFormat("mm:ss");
 
 
     public War(){
-        world = null;
+        world = Bukkit.getWorld("canavarworld");
         endTime = System.currentTimeMillis() + (long) TridentGuild.kingdomwar.getInt("war-length") *60*1000;
-        TridentGuild.getWarManager().getBossBar().setTitle(Utils.addColors(TridentGuild.messages.getString("bossbar.war-time").replace("%time%",getSecondsLeft()+" saniye")));
-        TridentGuild.getWarManager().getBossBar().setColor(BarColor.RED);
+        Utils.debug(TridentGuild.getWarManager()+"");
+
+
+        bossBar = Bukkit.createBossBar(
+                Utils.addColors(
+                        TridentGuild.messages.getString("bossbar.intermission").replace("%time%","")
+                ),
+                BarColor.YELLOW,
+                BarStyle.SOLID);
+
+        updateBossBar();
         beacon = new Beacon(this);
         main = mainRun.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,10);
     }
@@ -45,8 +57,40 @@ public class War {
     private BukkitRunnable mainRun = new BukkitRunnable() {
         @Override
         public void run() {
-            if(getSecondsLeft() <= 0){
-                state = WarState.FINISH;
+            updateBossBar();
+            switch (state){
+                case WAITING:
+                    changeState(WarState.PLAYING);
+                    break;
+                case PLAYING:
+                    if(getTimeLeft() <= 0){
+                        changeState(WarState.FINISH);
+                    }
+                    break;
+                case FINISH:
+                    if((endTime - System.currentTimeMillis())/1000 <= 0){
+                        playerGuilds.forEach((playerName, uuid) -> {
+                            removePlayer(Bukkit.getPlayerExact(playerName));
+                        });
+                        main.cancel();
+                        this.cancel();
+                        TridentGuild.getWarManager().restart();
+                    }
+                    break;
+            }
+
+        }
+    };
+
+    public void changeState(WarState state){
+        switch (state){
+            case PLAYING:
+                this.state = WarState.PLAYING;
+                bossBar.setColor(BarColor.RED);
+                Utils.debug("[TridentGuild] Savaş Başladı!");
+                break;
+            case FINISH:
+                this.state = WarState.FINISH;
 
                 UUID winnerGuild = getGuildByIndex(0);
 
@@ -56,34 +100,25 @@ public class War {
                     Utils.debug("[TridentGuild] "+guildUUID+" - "+guildPoints.get(guildUUID));
                 }
 
-                main.cancel();
-                this.cancel();
-
-
                 endTime = System.currentTimeMillis()+30*1000;
-                main = finishRun.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,10);
 
-                TridentGuild.getWarManager().getBossBar().setTitle(Utils.addColors(TridentGuild.messages.getString("bossbar.finish").replace("%time%",(int)(endTime - System.currentTimeMillis())/1000+" saniye")));
-                TridentGuild.getWarManager().getBossBar().setColor(BarColor.YELLOW);
-            }
+                bossBar.setTitle(Utils.addColors(TridentGuild.messages.getString("bossbar.finish").replace("%time%",(int)(endTime - System.currentTimeMillis())/1000+" saniye")));
+                bossBar.setColor(BarColor.YELLOW);
         }
-    };
-
-    private BukkitRunnable finishRun = new BukkitRunnable() {
-        @Override
-        public void run() {
-            if((endTime - System.currentTimeMillis())/1000 <= 0){
-                playerGuilds.forEach((playerName, uuid) -> {
-                    removePlayer(Bukkit.getPlayerExact(playerName));
-                });
-                main.cancel();
-                this.cancel();
-                TridentGuild.getWarManager().restart();
-            }
+    }
+    public void updateBossBar(){
+        switch (state){
+            case WAITING:
+                break;
+            case PLAYING:
+                Date date = new Date(getTimeLeft());
+                bossBar.setTitle(
+                        Utils.addColors(
+                                TridentGuild.messages.getString("bossbar.war-time").replace("%time%",format.format(date))
+                        ));
+                break;
         }
-    };
-
-
+    }
     public UUID getGuildByIndex(int index){
         sortGuildsByPoints();
 
@@ -110,7 +145,6 @@ public class War {
         playerWarDatas.get(dead.getName()).incDeaths();
         addPoints(playerGuilds.get(killer.getName()),KILL_POINTS);
         removePlayer(dead);
-        ((LivingEntity) dead).setHealth(20);
     }
     public void addPlayerToWar(Player player, String spawnID){
         if(!TridentGuild.getGuildManager().hasGuild(player.getName())) return;
@@ -126,6 +160,7 @@ public class War {
     }
     public void removePlayer(Player player){
         playerGuilds.remove(player);
+        ((LivingEntity) player).setHealth(20);
         player.teleport(Utils.getLocationFromString("lobby-spawn",world));
     }
 
@@ -133,8 +168,8 @@ public class War {
         return state;
     }
 
-    public int getSecondsLeft(){
-        return (int) ((endTime - System.currentTimeMillis())/1000);
+    public int getTimeLeft(){
+        return (int) (endTime - System.currentTimeMillis());
     }
     public void sortGuildsByPoints(){
         guildPoints = Utils.sortByValue(guildPoints,false);
@@ -147,6 +182,7 @@ public class War {
         return world;
     }
     enum WarState{
+        WAITING,
         PLAYING,
         FINISH
     }
