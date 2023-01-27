@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.utils.CustomBannerStand;
 import tc.trident.tridentguild.utils.Utils;
 
 import java.text.SimpleDateFormat;
@@ -20,8 +21,8 @@ import java.util.*;
 public class War {
     private World world;
     public Map<UUID, Integer> guildPoints = new LinkedHashMap<>();
-    public HashMap<String, UUID> playerGuilds = new HashMap<>();
     private HashMap<String, WarPlayerData> playerWarDatas = new HashMap<>();
+    public HashMap<String, WarPlayer> players = new HashMap<>();
     private WarState state = WarState.WAITING;
     private BukkitTask main;
     private Beacon beacon;
@@ -69,7 +70,7 @@ public class War {
                     break;
                 case FINISH:
                     if((endTime - System.currentTimeMillis())/1000 <= 0){
-                        playerGuilds.forEach((playerName, uuid) -> {
+                        players.forEach((playerName, warPlayer) -> {
                             removePlayer(Bukkit.getPlayerExact(playerName));
                         });
                         main.cancel();
@@ -133,8 +134,8 @@ public class War {
     }
     public boolean isGuildLimitReached(UUID guildUUID){
         int count = 0;
-        for(String playerName : playerGuilds.keySet()){
-            if(playerGuilds.get(playerName).equals(guildUUID))
+        for(String playerName : players.keySet()){
+            if(players.get(playerName).equals(guildUUID))
                 count+=1;
         }
         return count >= TridentGuild.kingdomwar.getInt("player-limit");
@@ -143,7 +144,7 @@ public class War {
     public void kill(Player killer, Player dead){
         playerWarDatas.get(killer.getName()).incKills();
         playerWarDatas.get(dead.getName()).incDeaths();
-        addPoints(playerGuilds.get(killer.getName()),KILL_POINTS);
+        addPoints(players.get(killer.getName()).getGuildUUID(),KILL_POINTS);
         removePlayer(dead);
     }
     public void addPlayerToWar(Player player, String spawnID){
@@ -153,13 +154,20 @@ public class War {
             guildPoints.put(guildUUID,0);
         if(!playerWarDatas.containsKey(player.getName()))
             playerWarDatas.put(player.getName(),new WarPlayerData());
-        playerGuilds.put(player.getName(), guildUUID);
+
+        CustomBannerStand bannerStand = new CustomBannerStand(player.getLocation(),
+                TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).patterns,guildUUID,
+                TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).bannerMaterial);
+
+        players.put(player.getName(), new WarPlayer(player.getName(), bannerStand, guildUUID));
 
         player.teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("spawn-locations."+spawnID),
                 TridentGuild.getWarManager().getWar().getWorld()));
     }
+
     public void removePlayer(Player player){
-        playerGuilds.remove(player);
+        players.get(player.getName()).stop();
+        players.remove(player.getName());
         ((LivingEntity) player).setHealth(20);
         player.teleport(Utils.getLocationFromString("lobby-spawn",world));
     }

@@ -9,6 +9,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import tc.trident.sync.player.events.TridentEntityDamageEvent;
 import tc.trident.tridentguild.TridentGuild;
 
@@ -18,7 +19,12 @@ public class WarListeners implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e){
         TridentGuild.getWarManager().getWar().bossBar.addPlayer(e.getPlayer());
     }
-
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent e){
+        if(TridentGuild.getWarManager().getWar().players.containsKey(e.getPlayer().getName())){
+            TridentGuild.getWarManager().getWar().removePlayer(e.getPlayer());
+        }
+    }
     @EventHandler
     public void onPlayerLastDamage(EntityDamageByEntityEvent e){
         if(TridentGuild.getWarManager().getWar().getState() == War.WarState.PLAYING){

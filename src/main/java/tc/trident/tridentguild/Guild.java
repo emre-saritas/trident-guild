@@ -24,8 +24,8 @@ public class Guild {
     private final String createDate;
     private int minerLevel = 0;
     private int lumberLevel = 0;
-    private HashMap<PatternType, DyeColor> patterns;
-    private Material bannerMaterial = Material.WHITE_BANNER;
+    public HashMap<PatternType, DyeColor> patterns;
+    public Material bannerMaterial = Material.WHITE_BANNER;
     private int hunterLevel = 0;
     private int farmerLevel = 0;
     private boolean pvp = false;

@@ -51,12 +51,12 @@ public class Beacon {
         HashMap<UUID, Integer> guildsInBeacon = new HashMap<>();
 
 
-        TridentGuild.getWarManager().getWar().playerGuilds.forEach((name,uuid) -> {
+        TridentGuild.getWarManager().getWar().players.forEach((name,warPlayer) -> {
             if(beaconCube.containsLocation(Bukkit.getPlayerExact(name).getLocation())){
-                if(!guildsInBeacon.containsKey(uuid))
-                    guildsInBeacon.put(uuid, 1);
+                if(!guildsInBeacon.containsKey(warPlayer.getGuildUUID()))
+                    guildsInBeacon.put(warPlayer.guildUUID, 1);
                 else
-                    guildsInBeacon.replace(uuid, guildsInBeacon.get(uuid)+1);
+                    guildsInBeacon.replace(warPlayer.getGuildUUID(), guildsInBeacon.get(warPlayer.getGuildUUID())+1);
             }
         });
 
