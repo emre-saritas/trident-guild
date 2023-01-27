@@ -48,6 +48,10 @@ banner-purchase: "&7Lonca flaması satın aldınız."
 # War messages
 general:
   winner-guild: "&eLonca Savaşı sona erdi! Kazanan Lonca: &a%guild-name%"
+bossbar:
+  intermission: "&eBir Sonraki Savaşa Kalan Süre: %time%"
+  war-time: "&eSavaşın Bitmesine Kalan Süre: %time%"
+  finish: "&eKazanan Lonca: %guild-name%"
 error:
   war-is-full: "&cSavaş'a en fazla 5 lonca üyesi girebilir."
   not-started: "&cSavaş henüz başlamadı."

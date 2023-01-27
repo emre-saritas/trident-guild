@@ -15,6 +15,9 @@ commands:
   lmsg:
     description: lmsg
     usage: /lmsg
+  war:
+    description: lmsg
+    usage: /lmsg
 
 depend: [TridentSync, TridentJobs, helper, helper-redis]
 loadbefore: [ajLeaderboards]
