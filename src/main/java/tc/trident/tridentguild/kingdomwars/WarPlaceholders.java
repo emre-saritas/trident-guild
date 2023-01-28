@@ -31,42 +31,70 @@ public class WarPlaceholders extends PlaceholderExpansion {
         War war = TridentGuild.getWarManager().getWar();
 
         if(params.equalsIgnoreCase("1st")){
-            UUID guildUUID = war.getGuildByIndex(0);
+            UUID guildUUID = war.getGuildByIndex(0, true);
             if(guildUUID != null){
                 return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
             }else{
                 return "---";
             }
         }else if(params.equalsIgnoreCase("2nd")){
-            UUID guildUUID = war.getGuildByIndex(1);
+            UUID guildUUID = war.getGuildByIndex(1, true);
             if(guildUUID != null){
                 return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
             }else{
                 return "---";
             }
         }else if(params.equalsIgnoreCase("3rd")){
-            UUID guildUUID = war.getGuildByIndex(2);
+            UUID guildUUID = war.getGuildByIndex(2, true);
+            if(guildUUID != null){
+                return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
+            }else{
+                return "---";
+            }
+        }else if(params.equalsIgnoreCase("4th")){
+            UUID guildUUID = war.getGuildByIndex(3, true);
+            if(guildUUID != null){
+                return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
+            }else{
+                return "---";
+            }
+        }else if(params.equalsIgnoreCase("5th")){
+            UUID guildUUID = war.getGuildByIndex(4, true);
             if(guildUUID != null){
                 return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
             }else{
                 return "---";
             }
         }else if(params.equalsIgnoreCase("1st_points")){
-            UUID guildUUID = war.getGuildByIndex(0);
+            UUID guildUUID = war.getGuildByIndex(0, true);
             if(guildUUID != null){
                 return war.guildPoints.get(guildUUID)+"";
             }else{
                 return "---";
             }
         }else if(params.equalsIgnoreCase("2nd_points")){
-            UUID guildUUID = war.getGuildByIndex(0);
+            UUID guildUUID = war.getGuildByIndex(1, true);
             if(guildUUID != null){
                 return war.guildPoints.get(guildUUID)+"";
             }else{
                 return "---";
             }
         }else if(params.equalsIgnoreCase("3rd_points")){
-            UUID guildUUID = war.getGuildByIndex(0);
+            UUID guildUUID = war.getGuildByIndex(2, true);
+            if(guildUUID != null){
+                return war.guildPoints.get(guildUUID)+"";
+            }else{
+                return "---";
+            }
+        }else if(params.equalsIgnoreCase("4th_points")){
+            UUID guildUUID = war.getGuildByIndex(3, true);
+            if(guildUUID != null){
+                return war.guildPoints.get(guildUUID)+"";
+            }else{
+                return "---";
+            }
+        }else if(params.equalsIgnoreCase("5th_points")){
+            UUID guildUUID = war.getGuildByIndex(4, true);
             if(guildUUID != null){
                 return war.guildPoints.get(guildUUID)+"";
             }else{
