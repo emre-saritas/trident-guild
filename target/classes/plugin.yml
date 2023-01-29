@@ -20,4 +20,3 @@ commands:
     usage: /lmsg
 
 depend: [TridentSync, TridentJobs, helper, helper-redis]
-loadbefore: [ajLeaderboards]
