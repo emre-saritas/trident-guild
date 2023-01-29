@@ -4,8 +4,9 @@ world: canavarworld
 player-limit: 5
 kill-point: 2
 beacon-point-per-second: 1
-war-length: 30      # mins
+war-length: 30            # mins
 
+next-war: 1675022400000   # timestamp
 
 temp-spawn-point: X,Y,Z
 lobby-spawn: X,Y,Z

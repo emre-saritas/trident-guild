@@ -35,6 +35,10 @@ public class WarPlayer {
         task.cancel();
     }
 
+    public String getPlayerName() {
+        return playerName;
+    }
+
     public CustomBannerStand getBannerStand() {
         return bannerStand;
     }

@@ -16,6 +16,8 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -29,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 public class War {
-    private World world;
     public Map<UUID, Integer> guildPoints = new LinkedHashMap<>();
     private HashMap<String, WarPlayerData> playerWarDatas = new HashMap<>();
     public HashMap<String, WarPlayer> players = new HashMap<>();
@@ -68,8 +69,6 @@ public class War {
 
 
     public War(){
-        world = Bukkit.getWorld("canavarworld");
-        endTime = System.currentTimeMillis() + (long) TridentGuild.kingdomwar.getInt("war-length") *60*1000;
         SCOREBOARD_KEY= MetadataKey.create("guildwar", ScoreboardObjective.class);
 
 
@@ -83,10 +82,12 @@ public class War {
         // Scoreboard güncelleme
         scoreboardUpdateTask=scoreboardUpdater();
 
-        updateBossBar();
-        beacon = new Beacon(this);
-        main = mainRun.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,10);
+        beacon = new Beacon();
+        main = mainRun.runTaskTimer(TridentGuild.getInstance(),10,10);
     }
+
+
+
 
     /**
      * Game time control
@@ -98,7 +99,8 @@ public class War {
             updateBossBar();
             switch (state){
                 case WAITING:
-                    changeState(WarState.PLAYING);
+                    if(TridentGuild.getWarManager().nextWar <= System.currentTimeMillis())
+                        changeState(WarState.PLAYING);
                     break;
                 case PLAYING:
                     if(getTimeLeft() <= 0){
@@ -108,8 +110,12 @@ public class War {
                 case FINISH:
                     if((endTime - System.currentTimeMillis())/1000 <= 0){
                         players.forEach((playerName, warPlayer) -> {
-                            removePlayer(Bukkit.getPlayerExact(playerName));
+                            Player player = Bukkit.getPlayerExact(playerName);
+                            players.get(player.getName()).stop();
+                            ((LivingEntity) player).setHealth(20);
+                            player.teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("lobby-spawn"), TridentGuild.getWarManager().world));
                         });
+                        players.clear();
                         main.cancel();
                         this.cancel();
                         TridentGuild.getWarManager().restart();
@@ -124,6 +130,7 @@ public class War {
         switch (state){
             case PLAYING:
                 this.state = WarState.PLAYING;
+                endTime = System.currentTimeMillis() + (long) TridentGuild.kingdomwar.getInt("war-length") *60*1000;
                 bossBar.setColor(BarColor.RED);
                 Utils.debug("[TridentGuild] Savaş Başladı!");
                 break;
@@ -138,6 +145,8 @@ public class War {
                     Utils.debug("[TridentGuild] "+guildUUID+" - "+guildPoints.get(guildUUID));
                 }
 
+                Bukkit.getOnlinePlayers().forEach(this::finishSound);
+
                 endTime = System.currentTimeMillis()+30*1000;
 
                 bossBar.setTitle(Utils.addColors(TridentGuild.messages.getString("bossbar.finish").replace("%time%",(int)(endTime - System.currentTimeMillis())/1000+" saniye")));
@@ -147,6 +156,10 @@ public class War {
     public void updateBossBar(){
         switch (state){
             case WAITING:
+                bossBar.setTitle(
+                        Utils.addColors(
+                                TridentGuild.messages.getString("bossbar.intermission").replace("%time%",TridentGuild.getWarManager().getNextWarDateString())
+                        ));
                 break;
             case PLAYING:
                 Date date = new Date(getTimeLeft());
@@ -202,6 +215,8 @@ public class War {
         playerWarDatas.get(killer.getName()).incKills();
         playerWarDatas.get(dead.getName()).incDeaths();
         addPoints(players.get(killer.getName()).getGuildUUID(),KILL_POINTS);
+        killer.sendMessage(Utils.addColors(Utils.getMessage("general.kill-points",true).replace("%killed%",dead.getName())));
+        killer.playSound(killer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
         removePlayer(dead);
     }
     public void addPlayerToWar(Player player, String spawnID){
@@ -219,16 +234,18 @@ public class War {
         players.put(player.getName(), wP);
 
         registerScoreboardToPlayer(player);
-
+        player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION,9999,0));
         player.teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("spawn-locations."+spawnID),
                 TridentGuild.getWarManager().getWar().getWorld()));
     }
-
+    public Beacon getBeacon() {
+        return beacon;
+    }
     public void removePlayer(Player player){
         players.get(player.getName()).stop();
         players.remove(player.getName());
         ((LivingEntity) player).setHealth(20);
-        player.teleport(Utils.getLocationFromString("lobby-spawn",world));
+        player.teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("lobby-spawn"), TridentGuild.getWarManager().world));
     }
     private void registerScoreboardToPlayer(Player player){
         ScoreboardObjective obj = sb.createPlayerObjective(player, "null", DisplaySlot.SIDEBAR);
@@ -257,7 +274,7 @@ public class War {
         guildPoints.replace(guildUUID,points+guildPoints.get(guildUUID));
     }
     public World getWorld() {
-        return world;
+        return TridentGuild.getWarManager().world;
     }
     private BukkitTask scoreboardUpdater(){
         return new BukkitRunnable(){

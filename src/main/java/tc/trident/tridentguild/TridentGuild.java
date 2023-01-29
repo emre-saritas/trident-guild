@@ -17,6 +17,7 @@ import tc.trident.tridentguild.kingdomwars.WarPlaceholders;
 import tc.trident.tridentguild.listeners.PlayerServerListeners;
 import tc.trident.tridentguild.listeners.RedisListeners;
 import tc.trident.tridentguild.mysql.*;
+import tc.trident.tridentguild.utils.CustomBannerStand;
 import tc.trident.tridentguild.utils.Yaml;
 
 public class TridentGuild extends ExtendedJavaPlugin {
@@ -39,6 +40,9 @@ public class TridentGuild extends ExtendedJavaPlugin {
         upgrades = new Yaml(getDataFolder() + "/upgrades.yml", "upgrades.yml");
         redis = new Yaml(getDataFolder() + "/redis.yml", "redis.yml");
         kingdomwar = new Yaml(getDataFolder() + "/kingdomwar.yml", "kingdomwar.yml");
+
+        clearBuggedCustomStands();
+
         try{
             syncManager = new SyncManager();
             sqlManager = new MySQLManager(this);
@@ -74,7 +78,13 @@ public class TridentGuild extends ExtendedJavaPlugin {
             warManager.stop();
         guildManager.unloadAllGuilds();
     }
-
+    public void clearBuggedCustomStands(){
+        Bukkit.getWorlds().forEach(world -> world.getEntities().forEach(entity -> {
+            if (CustomBannerStand.isCustomBannerStand(entity)) {
+                entity.remove();
+            }
+        }));
+    }
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;

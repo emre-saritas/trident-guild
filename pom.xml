@@ -54,13 +54,6 @@
             <systemPath>${project.basedir}/lib/spigot-1.16.5.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>us.ajg0702</groupId>
-            <artifactId>ajLeaderboards</artifactId>
-            <version>2.5.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ajLeaderboards.jar</systemPath>
-        </dependency>
-        <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.11.1</version>

@@ -12,11 +12,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import tc.trident.sync.player.events.TridentEntityDamageEvent;
 import tc.trident.tridentguild.TridentGuild;
+import tc.trident.tridentguild.utils.Utils;
 
 public class WarListeners implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
+        e.getPlayer().teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("lobby-spawn"), TridentGuild.getWarManager().world));
         TridentGuild.getWarManager().getWar().bossBar.addPlayer(e.getPlayer());
     }
     @EventHandler
@@ -25,6 +27,15 @@ public class WarListeners implements Listener {
             TridentGuild.getWarManager().getWar().removePlayer(e.getPlayer());
         }
     }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent e){
+        e.setDroppedExp(0);
+        e.getDrops().clear();
+        e.setKeepInventory(true);
+        e.setKeepLevel(true);
+    }
+
     @EventHandler
     public void onPlayerLastDamage(EntityDamageByEntityEvent e){
         if(TridentGuild.getWarManager().getWar().getState() == War.WarState.PLAYING){

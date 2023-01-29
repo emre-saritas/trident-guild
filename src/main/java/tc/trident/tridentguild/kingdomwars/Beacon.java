@@ -1,6 +1,9 @@
 package tc.trident.tridentguild.kingdomwars;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import tc.trident.tridentguild.TridentGuild;
@@ -12,10 +15,12 @@ import java.util.*;
 public class Beacon {
     private BukkitTask task;
     private Cuboid beaconCube;
+    private UUID owningGuild = null;
+    public World world = Bukkit.getWorld("canavarworld");
 
-    public Beacon(War warInstance){
-        beaconCube = new Cuboid(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("beacon.point-1"),warInstance.getWorld()),
-                Utils.getLocationFromString(TridentGuild.kingdomwar.getString("beacon.point-2"),warInstance.getWorld()));
+    public Beacon(){
+        beaconCube = new Cuboid(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("beacon.point-1"),world),
+                Utils.getLocationFromString(TridentGuild.kingdomwar.getString("beacon.point-2"),world));
 
         task = runnable.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,20);
     }
@@ -31,15 +36,24 @@ public class Beacon {
                 this.cancel();
                 task.cancel();
             }else{
-                UUID owningGuild = getNewOwningGuild();
+                owningGuild = getNewOwningGuild();
                 if(owningGuild != null){
                     TridentGuild.getWarManager().getWar().addPoints(owningGuild, TridentGuild.getWarManager().getWar().BEACON_POINTS);
+                    for(WarPlayer warPlayer : TridentGuild.getWarManager().getWar().players.values()){
+                        if(warPlayer.getGuildUUID().equals(owningGuild)){
+                            Player target = Bukkit.getPlayerExact(warPlayer.getPlayerName());
+                            target.sendMessage(Utils.addColors(Utils.getMessage("general.beacon-points",true)));
+                            target.playSound(target.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,1,1);
+                        }
+                    }
                 }
             }
         }
     };
 
-
+    public UUID getOwningGuild() {
+        return owningGuild;
+    }
     /**
      * Lists and iterates over players in the beacon area
      * If a guild has more members than any others

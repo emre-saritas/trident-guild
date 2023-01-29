@@ -30,7 +30,10 @@ public class WarPlaceholders extends PlaceholderExpansion {
             return "---";
         War war = TridentGuild.getWarManager().getWar();
 
-        if(params.equalsIgnoreCase("1st")){
+        if(params.equalsIgnoreCase("beacon")){
+            if(war.getBeacon().getOwningGuild() == null) return "---";
+            return TridentGuild.getGuildManager().loadedGuilds.get(war.getBeacon().getOwningGuild()).getGuildName();
+        }else if(params.equalsIgnoreCase("1st")){
             getGuild(war, 0);
         }else if(params.equalsIgnoreCase("2nd")){
             getGuild(war, 1);
