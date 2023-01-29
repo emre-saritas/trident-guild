@@ -70,6 +70,8 @@ public class TridentGuild extends ExtendedJavaPlugin {
     protected void disable() {
         if(redisListeners != null)
             redisListeners.close();
+        if(TridentSync.SERVER_TYPE == ServerType.ARENA)
+            warManager.stop();
         guildManager.unloadAllGuilds();
     }
 

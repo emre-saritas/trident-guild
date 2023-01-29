@@ -31,77 +31,44 @@ public class WarPlaceholders extends PlaceholderExpansion {
         War war = TridentGuild.getWarManager().getWar();
 
         if(params.equalsIgnoreCase("1st")){
-            UUID guildUUID = war.getGuildByIndex(0, true);
-            if(guildUUID != null){
-                return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
-            }else{
-                return "---";
-            }
+            getGuild(war, 0);
         }else if(params.equalsIgnoreCase("2nd")){
-            UUID guildUUID = war.getGuildByIndex(1, true);
-            if(guildUUID != null){
-                return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
-            }else{
-                return "---";
-            }
+            getGuild(war, 1);
         }else if(params.equalsIgnoreCase("3rd")){
-            UUID guildUUID = war.getGuildByIndex(2, true);
-            if(guildUUID != null){
-                return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
-            }else{
-                return "---";
-            }
+            getGuild(war, 2);
         }else if(params.equalsIgnoreCase("4th")){
-            UUID guildUUID = war.getGuildByIndex(3, true);
-            if(guildUUID != null){
-                return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
-            }else{
-                return "---";
-            }
+            getGuild(war, 3);
         }else if(params.equalsIgnoreCase("5th")){
-            UUID guildUUID = war.getGuildByIndex(4, true);
-            if(guildUUID != null){
-                return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
-            }else{
-                return "---";
-            }
+            getGuild(war, 4);
         }else if(params.equalsIgnoreCase("1st_points")){
-            UUID guildUUID = war.getGuildByIndex(0, true);
-            if(guildUUID != null){
-                return war.guildPoints.get(guildUUID)+"";
-            }else{
-                return "---";
-            }
+            return getGuildPoints(war,0);
         }else if(params.equalsIgnoreCase("2nd_points")){
-            UUID guildUUID = war.getGuildByIndex(1, true);
-            if(guildUUID != null){
-                return war.guildPoints.get(guildUUID)+"";
-            }else{
-                return "---";
-            }
+            return getGuildPoints(war,1);
         }else if(params.equalsIgnoreCase("3rd_points")){
-            UUID guildUUID = war.getGuildByIndex(2, true);
-            if(guildUUID != null){
-                return war.guildPoints.get(guildUUID)+"";
-            }else{
-                return "---";
-            }
+            return getGuildPoints(war,2);
         }else if(params.equalsIgnoreCase("4th_points")){
-            UUID guildUUID = war.getGuildByIndex(3, true);
-            if(guildUUID != null){
-                return war.guildPoints.get(guildUUID)+"";
-            }else{
-                return "---";
-            }
+            return getGuildPoints(war,3);
         }else if(params.equalsIgnoreCase("5th_points")){
-            UUID guildUUID = war.getGuildByIndex(4, true);
-            if(guildUUID != null){
-                return war.guildPoints.get(guildUUID)+"";
-            }else{
-                return "---";
-            }
+            return getGuildPoints(war,4);
         }
 
         return null;
+    }
+
+    public static String getGuild(War war, int i){
+        UUID guildUUID = war.getGuildByIndex(i, true);
+        if(guildUUID != null){
+            return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
+        }else{
+            return "---";
+        }
+    }
+    public static String getGuildPoints(War war, int i){
+        UUID guildUUID = war.getGuildByIndex(i, true);
+        if(guildUUID != null){
+            return war.guildPoints.get(guildUUID)+"";
+        }else{
+            return "---";
+        }
     }
 }

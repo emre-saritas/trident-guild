@@ -1,5 +1,6 @@
 package tc.trident.tridentguild.kingdomwars;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.lucko.helper.Schedulers;
 import me.lucko.helper.Services;
 import me.lucko.helper.metadata.Metadata;
@@ -45,22 +46,22 @@ public class War {
     private SimpleDateFormat format = new SimpleDateFormat("mm:ss");
 
     private BiConsumer<Player, ScoreboardObjective> updater = (p, obj) -> {
-
         obj.setDisplayName("&9&lLonca Savaşı");
         obj.applyLines(
                 " ",
                 "&6| &fAd: &6"+p.getName(),
                 "&6| &fPing: &6"+((CraftPlayer) p).getHandle().ping+"ms",
                 "&6| &fLonca: &e"+TridentGuild.getGuildManager().loadedGuilds.get(players.get(p.getName()).getGuildUUID()).getGuildName(),
+                "&6| &fLonca Puanı: &e"+guildPoints.get(players.get(p.getName()).getGuildUUID()),
                 "&6| &fÖldürme: &e"+playerWarDatas.get(p.getName()).getKills(),
                 "&6| &fÖlme: &e"+playerWarDatas.get(p.getName()).getDeaths(),
                 "  ",
                 "&f&lPuanlar",
-                "&9| &f1. %trident_war_1st% - &6%trident_war_1st_points%",
-                "&9| &f2. %trident_war_2nd% - &6%trident_war_2nd_points%",
-                "&9| &f3. %trident_war_3rd% - &6%trident_war_3rd_points%",
-                "&9| &f4. %trident_war_4th% - &6%trident_war_4th_points%",
-                "&9| &f5. %trident_war_5th% - &6%trident_war_5th_points%",
+                "&9| &f1. "+WarPlaceholders.getGuild(this,0)+" - &6"+WarPlaceholders.getGuildPoints(this,0),
+                "&9| &f2. "+WarPlaceholders.getGuild(this,1)+" - &6"+WarPlaceholders.getGuildPoints(this,1),
+                "&9| &f3. "+WarPlaceholders.getGuild(this,2)+" - &6"+WarPlaceholders.getGuildPoints(this,2),
+                "&9| &f4. "+WarPlaceholders.getGuild(this,3)+" - &6"+WarPlaceholders.getGuildPoints(this,3),
+                "&9| &f5. "+WarPlaceholders.getGuild(this,4)+" - &6"+WarPlaceholders.getGuildPoints(this,4),
                 "   "
         );
     };
@@ -210,12 +211,14 @@ public class War {
             guildPoints.put(guildUUID,0);
         if(!playerWarDatas.containsKey(player.getName()))
             playerWarDatas.put(player.getName(),new WarPlayerData());
-        registerScoreboardToPlayer(player);
         CustomBannerStand bannerStand = new CustomBannerStand(player.getLocation(),
                 TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).patterns,guildUUID,
                 TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).bannerMaterial);
 
-        players.put(player.getName(), new WarPlayer(player.getName(), bannerStand, guildUUID));
+        WarPlayer wP = new WarPlayer(player.getName(), bannerStand, guildUUID);
+        players.put(player.getName(), wP);
+
+        registerScoreboardToPlayer(player);
 
         player.teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("spawn-locations."+spawnID),
                 TridentGuild.getWarManager().getWar().getWorld()));
@@ -236,7 +239,13 @@ public class War {
     public WarState getState() {
         return state;
     }
-
+    public void stop(){
+        main.cancel();
+        players.forEach((s, warPlayer) -> {
+            if(Bukkit.getOfflinePlayer(s).isOnline())
+                removePlayer(Bukkit.getPlayerExact(s));
+        });
+    }
     public int getTimeLeft(){
         return (int) (endTime - System.currentTimeMillis());
     }
@@ -245,7 +254,7 @@ public class War {
     }
     public void addPoints(UUID guildUUID, int points){
         Utils.debug("[TridentGuild] "+guildUUID+" earned "+points+" points!");
-        guildPoints.replace(guildUUID,points);
+        guildPoints.replace(guildUUID,points+guildPoints.get(guildUUID));
     }
     public World getWorld() {
         return world;
@@ -255,6 +264,7 @@ public class War {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
+                    if(!players.containsKey(player.getName())) continue;
                     MetadataMap metadata = Metadata.provideForPlayer(player);
                     ScoreboardObjective obj = metadata.getOrNull(SCOREBOARD_KEY);
                     if (obj != null) {

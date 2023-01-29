@@ -31,10 +31,12 @@ public class WarManager {
 
     }
 
-
-    public void restart(){
+    public void stop(){
+        war.stop();
         war = null;
-        // restart of the server
+    }
+    public void restart(){
+        stop();
     }
     public boolean isWarStarted(){
         return war != null;
