@@ -1,5 +1,7 @@
 package tc.trident.tridentguild.kingdomwars;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -19,6 +21,7 @@ public class WarListeners implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         e.getPlayer().teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("lobby-spawn"), TridentGuild.getWarManager().world));
+        TridentGuild.getWarManager().getWar().registerScoreboardToPlayer(e.getPlayer());
         TridentGuild.getWarManager().getWar().bossBar.addPlayer(e.getPlayer());
     }
     @EventHandler
@@ -35,20 +38,33 @@ public class WarListeners implements Listener {
         e.setKeepInventory(true);
         e.setKeepLevel(true);
     }
-
     @EventHandler
     public void onPlayerLastDamage(EntityDamageByEntityEvent e){
         if(TridentGuild.getWarManager().getWar().getState() == War.WarState.PLAYING){
 
             if(e.getEntity().getType() != EntityType.PLAYER) return;
             if(TridentGuild.getWarManager().getWar() == null) return;
+            War war = TridentGuild.getWarManager().getWar();
+
+            if(war.players.get(e.getEntity().getName()).isSpawnProtect()){
+                ((LivingEntity)e.getEntity()).setHealth(20);
+                e.setCancelled(true);
+                return;
+            }
+
             if(e.getDamage() < ((LivingEntity) e.getEntity()).getHealth()) return;
             e.setCancelled(true);
 
-            War war = TridentGuild.getWarManager().getWar();
 
             if(e.getDamager().getType() != EntityType.PLAYER) {
-                TridentGuild.getWarManager().getWar().removePlayer((Player) e.getEntity());
+                if(e.getDamager().getType() == EntityType.ARROW){
+                    Arrow travel = (Arrow) e.getDamager();
+                    if ((travel.getShooter() instanceof Player)) {
+                        Player killer = (Player) travel.getShooter();
+                        war.kill(killer, (Player) e.getEntity());
+                    }
+                }else
+                    TridentGuild.getWarManager().getWar().removePlayer((Player) e.getEntity());
             }else
                 war.kill((Player) e.getDamager(), (Player) e.getEntity());
         }

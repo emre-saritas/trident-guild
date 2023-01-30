@@ -22,7 +22,7 @@ public class Beacon {
         beaconCube = new Cuboid(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("beacon.point-1"),world),
                 Utils.getLocationFromString(TridentGuild.kingdomwar.getString("beacon.point-2"),world));
 
-        task = runnable.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,20);
+        task = runnable.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,60);
     }
 
     /**

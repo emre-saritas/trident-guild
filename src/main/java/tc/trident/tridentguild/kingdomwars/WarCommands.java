@@ -27,6 +27,12 @@ public class WarCommands implements CommandExecutor {
 
                 if(args[0].equalsIgnoreCase("tp0")){
                     tryEnterWar(player,"0");
+                }else if(args[0].equalsIgnoreCase("tp1")){
+                    tryEnterWar(player,"1");
+                }else if(args[0].equalsIgnoreCase("tp2")){
+                    tryEnterWar(player,"2");
+                }else if(args[0].equalsIgnoreCase("tp3")){
+                    tryEnterWar(player,"3");
                 }
             }
         }

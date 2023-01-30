@@ -50,6 +50,8 @@ general:
   winner-guild: "&eLonca Savaşı sona erdi! Kazanan Lonca: &a%guild-name%"
   beacon-points: "&7Loncanız &aSavaş Merkezi&7'nden 2 puan kazandı."
   kill-points: "&7Loncanız &e%killed% &7adlı oyuncuyu öldürerek 5 puan kazandı."
+  start: "&aSavaş Başladı! &eHerkese iyi oyunlar..."
+  finish: "&cSavaş Bitti! &fKazanan takım: %e%guild%"
 bossbar:
   intermission: "&eBir Sonraki Savaşa Kalan Süre: %time%"
   war-time: "&eSavaşın Bitmesine Kalan Süre: %time%"

@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.TridentGuild;
 
 import java.util.UUID;
@@ -61,7 +62,12 @@ public class WarPlaceholders extends PlaceholderExpansion {
     public static String getGuild(War war, int i){
         UUID guildUUID = war.getGuildByIndex(i, true);
         if(guildUUID != null){
-            return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
+            if(TridentGuild.getGuildManager().loadedGuilds.containsKey(guildUUID))
+                return TridentGuild.getGuildManager().loadedGuilds.get(guildUUID).getGuildName();
+            else{
+                Guild guild = TridentGuild.getSqlHandler().getGuild(guildUUID);
+                return guild.getGuildName();
+            }
         }else{
             return "---";
         }

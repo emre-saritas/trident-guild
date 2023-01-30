@@ -16,6 +16,8 @@ public class WarPlayer {
     CustomBannerStand bannerStand;
     UUID guildUUID;
     BukkitTask task;
+    boolean spawnProtect = true;
+    long spawnProtectEnd = System.currentTimeMillis()+1000*3;
 
     public WarPlayer(String playerName, CustomBannerStand bannerStand, UUID guildUUID) {
         this.playerName = playerName;
@@ -25,9 +27,15 @@ public class WarPlayer {
         task = new BukkitRunnable(){
             @Override
             public void run() {
+                if(spawnProtectEnd <= System.currentTimeMillis())
+                    spawnProtect = false;
                 bannerStand.getStand().teleport(Bukkit.getPlayerExact(playerName).getLocation().add(new Vector(0,2,0)));
             }
         }.runTaskTimer(TridentGuild.getInstance(), 10, 2);
+    }
+
+    public boolean isSpawnProtect() {
+        return spawnProtect;
     }
 
     public void stop(){

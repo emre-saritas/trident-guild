@@ -21,6 +21,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
+import tc.trident.tridentguild.Guild;
 import tc.trident.tridentguild.TridentGuild;
 import tc.trident.tridentguild.utils.CustomBannerStand;
 import tc.trident.tridentguild.utils.Utils;
@@ -48,23 +49,52 @@ public class War {
 
     private BiConsumer<Player, ScoreboardObjective> updater = (p, obj) -> {
         obj.setDisplayName("&9&lLonca Savaşı");
-        obj.applyLines(
-                " ",
-                "&6| &fAd: &6"+p.getName(),
-                "&6| &fPing: &6"+((CraftPlayer) p).getHandle().ping+"ms",
-                "&6| &fLonca: &e"+TridentGuild.getGuildManager().loadedGuilds.get(players.get(p.getName()).getGuildUUID()).getGuildName(),
-                "&6| &fLonca Puanı: &e"+guildPoints.get(players.get(p.getName()).getGuildUUID()),
-                "&6| &fÖldürme: &e"+playerWarDatas.get(p.getName()).getKills(),
-                "&6| &fÖlme: &e"+playerWarDatas.get(p.getName()).getDeaths(),
-                "  ",
-                "&f&lPuanlar",
-                "&9| &f1. "+WarPlaceholders.getGuild(this,0)+" - &6"+WarPlaceholders.getGuildPoints(this,0),
-                "&9| &f2. "+WarPlaceholders.getGuild(this,1)+" - &6"+WarPlaceholders.getGuildPoints(this,1),
-                "&9| &f3. "+WarPlaceholders.getGuild(this,2)+" - &6"+WarPlaceholders.getGuildPoints(this,2),
-                "&9| &f4. "+WarPlaceholders.getGuild(this,3)+" - &6"+WarPlaceholders.getGuildPoints(this,3),
-                "&9| &f5. "+WarPlaceholders.getGuild(this,4)+" - &6"+WarPlaceholders.getGuildPoints(this,4),
-                "   "
-        );
+        if(TridentGuild.getGuildManager().hasGuild(p.getName())){
+            Guild guild = TridentGuild.getGuildManager().loadedGuilds.get(TridentGuild.getGuildManager().onlinePlayerGuilds.get(p.getName()));
+            int death = 0;
+            int kill = 0;
+            if(playerWarDatas.containsKey(p.getName())){
+                kill = playerWarDatas.get(p.getName()).getKills();
+                death = playerWarDatas.get(p.getName()).getDeaths();
+            }
+            int guildP = 0;
+            if(guildPoints.containsKey(guild.getGuildUUID()))
+                guildP = guildPoints.get(guild.getGuildUUID());
+            obj.applyLines(
+                    " ",
+                    "&6| &fAd: &6"+p.getName(),
+                    "&6| &fPing: &6"+((CraftPlayer) p).getHandle().ping+"ms",
+                    "&6| &fLonca: &e"+guild.getGuildName(),
+                    "&6| &fLonca Puanı: &e"+guildP,
+                    "&6| &fÖldürme: &e"+kill,
+                    "&6| &fÖlme: &e"+death,
+                    "  ",
+                    "&f&lPuanlar",
+                    "&9| &f1. "+WarPlaceholders.getGuild(this,0)+" - &6"+WarPlaceholders.getGuildPoints(this,0),
+                    "&9| &f2. "+WarPlaceholders.getGuild(this,1)+" - &6"+WarPlaceholders.getGuildPoints(this,1),
+                    "&9| &f3. "+WarPlaceholders.getGuild(this,2)+" - &6"+WarPlaceholders.getGuildPoints(this,2),
+                    "&9| &f4. "+WarPlaceholders.getGuild(this,3)+" - &6"+WarPlaceholders.getGuildPoints(this,3),
+                    "&9| &f5. "+WarPlaceholders.getGuild(this,4)+" - &6"+WarPlaceholders.getGuildPoints(this,4),
+                    "   "
+            );
+        }else{
+            obj.applyLines(
+                    " ",
+                    "&6| &fAd: &6"+p.getName(),
+                    "&6| &fPing: &6"+((CraftPlayer) p).getHandle().ping+"ms",
+                    "&6| &fLonca: &eYok",
+                    "&6| &fLonca Puanı: &e0",
+                    "&6| &fÖldürme: &e0",
+                    "&6| &fÖlme: &e0",
+                    "  ",
+                    "&f&lPuanlar",
+                    "&9| &f1. "+WarPlaceholders.getGuild(this,0)+" - &6"+WarPlaceholders.getGuildPoints(this,0),
+                    "&9| &f2. "+WarPlaceholders.getGuild(this,1)+" - &6"+WarPlaceholders.getGuildPoints(this,1),
+                    "&9| &f3. "+WarPlaceholders.getGuild(this,2)+" - &6"+WarPlaceholders.getGuildPoints(this,2),
+                    "&9| &f4. "+WarPlaceholders.getGuild(this,3)+" - &6"+WarPlaceholders.getGuildPoints(this,3),
+                    "&9| &f5. "+WarPlaceholders.getGuild(this,4)+" - &6"+WarPlaceholders.getGuildPoints(this,4),
+                    "   ");
+        }
     };
 
 
@@ -104,7 +134,8 @@ public class War {
                     break;
                 case PLAYING:
                     if(getTimeLeft() <= 0){
-                        changeState(WarState.FINISH);
+                        if(!Objects.equals(guildPoints.get(getGuildByIndex(0, true)), guildPoints.get(getGuildByIndex(1, true))))
+                            changeState(WarState.FINISH);
                     }
                     break;
                 case FINISH:
@@ -132,12 +163,14 @@ public class War {
                 this.state = WarState.PLAYING;
                 endTime = System.currentTimeMillis() + (long) TridentGuild.kingdomwar.getInt("war-length") *60*1000;
                 bossBar.setColor(BarColor.RED);
+                Bukkit.broadcastMessage(Utils.addColors(Utils.getMessage("general.start",true)));
                 Utils.debug("[TridentGuild] Savaş Başladı!");
                 break;
             case FINISH:
                 this.state = WarState.FINISH;
 
                 UUID winnerGuild = getGuildByIndex(0, true);
+
 
                 Utils.debug("[TridentGuild] Savaş Sona Erdi. Kazanan Lonca: "+winnerGuild);
                 Utils.debug("[TridentGuild] Puan Durumu:");
@@ -149,8 +182,9 @@ public class War {
 
                 endTime = System.currentTimeMillis()+30*1000;
 
-                bossBar.setTitle(Utils.addColors(TridentGuild.messages.getString("bossbar.finish").replace("%time%",(int)(endTime - System.currentTimeMillis())/1000+" saniye")));
+                bossBar.setTitle(Utils.addColors(TridentGuild.messages.getString("bossbar.finish").replace("%guild-name%",TridentGuild.getGuildManager().loadedGuilds.get(winnerGuild).getGuildName())));
                 bossBar.setColor(BarColor.YELLOW);
+                Bukkit.broadcastMessage(Utils.addColors(Utils.getMessage("general.finish",true).replace("%guild%",TridentGuild.getGuildManager().loadedGuilds.get(winnerGuild).getGuildName())));
         }
     }
     public void updateBossBar(){
@@ -181,6 +215,7 @@ public class War {
         for(UUID keyGuild : guildPoints.keySet()){
             if(i==index)
                 guild = keyGuild;
+            i+=1;
         }
         return guild;
     }
@@ -205,7 +240,7 @@ public class War {
     public boolean isGuildLimitReached(UUID guildUUID){
         int count = 0;
         for(String playerName : players.keySet()){
-            if(players.get(playerName).equals(guildUUID))
+            if(players.get(playerName).getGuildUUID().equals(guildUUID))
                 count+=1;
         }
         return count >= TridentGuild.kingdomwar.getInt("player-limit");
@@ -222,7 +257,7 @@ public class War {
     public void addPlayerToWar(Player player, String spawnID){
         if(!TridentGuild.getGuildManager().hasGuild(player.getName())) return;
         UUID guildUUID = TridentGuild.getGuildManager().getPlayerGuild(player.getName()).getGuildUUID();
-        if(!guildPoints.containsKey(TridentGuild.getGuildManager().getPlayerGuild(player.getName())))
+        if(!guildPoints.containsKey(TridentGuild.getGuildManager().onlinePlayerGuilds.get(player.getName())))
             guildPoints.put(guildUUID,0);
         if(!playerWarDatas.containsKey(player.getName()))
             playerWarDatas.put(player.getName(),new WarPlayerData());
@@ -233,7 +268,6 @@ public class War {
         WarPlayer wP = new WarPlayer(player.getName(), bannerStand, guildUUID);
         players.put(player.getName(), wP);
 
-        registerScoreboardToPlayer(player);
         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION,9999,0));
         player.teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("spawn-locations."+spawnID),
                 TridentGuild.getWarManager().getWar().getWorld()));
@@ -247,7 +281,7 @@ public class War {
         ((LivingEntity) player).setHealth(20);
         player.teleport(Utils.getLocationFromString(TridentGuild.kingdomwar.getString("lobby-spawn"), TridentGuild.getWarManager().world));
     }
-    private void registerScoreboardToPlayer(Player player){
+    public void registerScoreboardToPlayer(Player player){
         ScoreboardObjective obj = sb.createPlayerObjective(player, "null", DisplaySlot.SIDEBAR);
         Metadata.provideForPlayer(player).put(SCOREBOARD_KEY, obj);
 
@@ -271,7 +305,8 @@ public class War {
     }
     public void addPoints(UUID guildUUID, int points){
         Utils.debug("[TridentGuild] "+guildUUID+" earned "+points+" points!");
-        guildPoints.replace(guildUUID,points+guildPoints.get(guildUUID));
+        int newP = guildPoints.get(guildUUID)+points;
+        guildPoints.replace(guildUUID,newP);
     }
     public World getWorld() {
         return TridentGuild.getWarManager().world;
@@ -281,7 +316,6 @@ public class War {
             @Override
             public void run() {
                 for (Player player : Bukkit.getOnlinePlayers()) {
-                    if(!players.containsKey(player.getName())) continue;
                     MetadataMap metadata = Metadata.provideForPlayer(player);
                     ScoreboardObjective obj = metadata.getOrNull(SCOREBOARD_KEY);
                     if (obj != null) {
@@ -289,7 +323,7 @@ public class War {
                     }
                 }
             }
-        }.runTaskTimerAsynchronously(TridentGuild.getInstance(),10,10);
+        }.runTaskTimerAsynchronously(TridentGuild.getInstance(),5,5);
     }
     enum WarState{
         WAITING,
