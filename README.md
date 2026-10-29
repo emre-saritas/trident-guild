@@ -18,7 +18,7 @@ A guild (lonca) and guild-war plugin for a Paper/Spigot 1.16.5 Minecraft network
 
 ## Getting started
 
-Requirements: JDK 11, Maven, and the jars in `lib/` (Spigot, TridentSync, TridentJobs, helper, helper-redis).
+Requirements: JDK 11, Maven, and these jars placed in `lib/` (not committed): `spigot-1.16.5.jar`, `TridentSync-1.0.0.jar`, `TridentJobs.jar`, `helper.jar`, `helper-redis.jar`.
 
 ```bash
 mvn package
@@ -57,3 +57,7 @@ src/main/java/tc/trident/tridentguild/
 ├── mysql/                      # persistence
 └── utils/
 ```
+
+## License
+
+[MIT](LICENSE)

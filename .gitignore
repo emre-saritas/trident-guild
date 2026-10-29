@@ -4,3 +4,6 @@ target/
 # IDE
 .idea/
 *.iml
+
+# Local jars, not redistributed
+lib/
